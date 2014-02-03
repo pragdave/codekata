@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>CodeKata: How It Started - CodeKata</title>
+  <meta name="author" content="Dave Thomas (@PragDave)">
+
+  
+  <meta name="description" content="(This is a long one. It explains how I discovered that something I do
+almost every day to improve my coding is actually a little ritual that
+has much &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pragdave.github.io/codekata/kata/codekata-how-it-started">
+  <link href="/codekata/favicon.png" rel="icon">
+  <link href="/codekata/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/codekata/atom.xml" rel="alternate" title="CodeKata" type="application/atom+xml">
+  <script src="/codekata/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/codekata/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/codekata/">CodeKata</a></h1>
+  
+    <h2>Experience is the<br/><em>only</em> teacher</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/codekata/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pragdave.github.io/codekata" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/codekata/">Blog</a></li>
+  <li><a href="/codekata/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">CodeKata: How It Started</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-31T00:00:00-06:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://pragdave.github.io/codekata">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>(This is a long one. It explains how I discovered that something I do
+almost every day to improve my coding is actually a little ritual that
+has much in common with practice in the martial arts…)</p>
+
+<!-- more -->
+
+
+<p>This all starts with the way RubLog, some blogging software I once
+wrote. I wanted to experiment how it does searching (but this isn’t an
+article about searching, or about bit twiddling. Trust me). Because I
+eventually wanted to use cosine-based comparisons to find similar
+articles, I build vectors mapping word occurrences to each document in
+the blog. I basically ended up with a set of 1,200-1,500 bits for each
+document. To implement a basic ranked search, I needed to be able to
+perform a bitwise AND between each of these vectors and a vector
+containing the search terms, and then count the number of one-bits in
+the result.</p>
+
+<p>I had a spare 45 minutes last night (I took Zachary to his karate
+lesson, but there was no room in the parent’s viewing area), so I
+thought I’d play with this. First I tried storing the bit vectors
+different ways: it turns out (to my surprise) that storing them as an
+array of fixnums has almost exactly the same speed as storing them as
+the bits in a bignum. (Also, rather pleasingly, changing between the
+two representations involves altering just two lines of code). Because
+it marshals far more compactly, I decided to stick with the bignum.</p>
+
+<p>Then I had fun playing with the bit counting itself. The existing code
+uses the obvious algorithm:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">max_bit</span><span class="o">.</span><span class="n">times</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">count</span> <span class="o">+=</span> <span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just how slow was this? I wrote a simple testbed that generated one
+hundred 1,000 bit vectors, each with 20 random bits set, and timed the
+loop. For all 100, it took about .4s.</p>
+
+<p>Then I tried using the ‘divide-and-conquer’ counting algorithm from
+chapter 5 of Hacker’s Delight (modified to deal with chunking the
+Bignum into 30-bit words).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x3fffffff</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x55555555</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x0f0f0f0f</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x3f</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This ran about 2.5 times faster that the naive algorithm.</p>
+
+<p>Then I realized that when I was comparing a set of search times with
+just a few words in it, the bit vector would be very sparse. Each
+chunk in the loop above would be likely to be zero. So I added a test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x3fffffff</span>
+</span><span class='line'>  <span class="k">next</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">zero?</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x55555555</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x0f0f0f0f</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x3f</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I was seven times faster than the original. But my testbed was
+using vectors containing 20 set bits (out of 1,000). I changed it to
+generate timings with vectors containing 1, 2, 5, 10, 20, 100, and 900
+set bits. This got even better: I was up to a factor of 15 faster with
+1 or 2 bits in the vector.</p>
+
+<p>But if I could speed things up this much by eliminating zero chunks in
+the bit-twiddling algorithm could I do the same in the simple counting
+algorithm? I tried a third algorithm:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>   <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="c1"># &amp; 0x3fffffff</span>
+</span><span class='line'>   <span class="k">next</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">zero?</span>
+</span><span class='line'>   <span class="mi">30</span><span class="o">.</span><span class="n">times</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">}</span>
+</span><span class='line'> <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The inner loop here is the same as for the original count, but I now
+count the bits in chunks of 30.</p>
+
+<p>This code performs identically to the bit-twiddling code for 1 set
+bit, and only slightly worse for 2 set bits. However. once the number
+of bits starts to grow (past about 5 for my given chunk size), the
+performance starts to tail off. At 100 bits it’s slower than the
+original naive count.</p>
+
+<p>So for my particular application, I could probably chose either of the
+chunked counting algorithms. Because the bit twiddling one scales up
+to larger numbers of bits, and because I’ll need that later on if I
+ever start doing the cosine-based matching of documents, I went with
+it.</p>
+
+<p>So what’s the point of all this?</p>
+
+<p>Yesterday I posted a <a href="http://pragdave.me/blog/2003/03/23/artifacting/">blog entry</a>
+about the importance of verbs. It said
+&ldquo;Often the true value of a thing isn’t the thing itself, but instead
+is the activity that created it.&rdquo; Chad Fowler picked this up and wrote
+a <a href="http://chadfowler.com/blog/2003/03/25/valueless-software/">wonderful piece</a>
+showing how this was true for musicians. And Brian
+Marick picked up of Chad’s piece to emphasize the value of practice
+when learning a creative process.</p>
+
+<p>At the same time, Andy and I had been discussing a set of music tapes
+he had. Originally designed to help musicians practice scales and
+arpeggios, these had been so popular that they now encompassed a whole
+spectrum of practice techniques. We were bemoaning the fact that it
+seemed unlikely that we’d be able to get developers to do the same: to
+buy some aid to help them practice programming. We just felt that
+practicing was not something that programmers did.</p>
+
+<p>Skip forward to this morning. In the shower, I got to thinking about
+this, and realized that my little 45 minute exploration of bit
+counting was actually a practice session. I wasn’t really worried
+about the performance of bit counting in the blog’s search algorithm;
+in reality it comes back pretty much instantaneously. Instead, I just
+wanted to play with some code and experiment with a technique I hadn’t
+used before. I did it in a simple, controlled environment, and I tried
+many different variations (more than I’ve listed here). And I’ve still
+got some more playing to do: I want to mess around with the effect of
+varying the chunk size, and I want to see if any of the other bit
+counting algorithms perform faster.</p>
+
+<p>What made this a practice session? Well, I had some time without
+interruptions. I had a simple thing I wanted to try, and I tried it
+many times. I looked for feedback each time so I could work to
+improve. There was no pressure: the code was effectively throwaway. It
+was fun: I kept making small steps forward, which motivated me to
+continue. Finally, I came out of it knowing more than when I went in.</p>
+
+<p>Ultimately it was having the free time that allowed me to practice. If
+the pressure was on, if there was a deadline to delivery the blog
+search functionality, then the existing performance would have been
+acceptable, and the practice would never have taken place. But those
+45 pressure-free minutes let me play.</p>
+
+<p>So how can we do this in the real world? How can we help developers do
+the practicing that’s clearly necessary in any creative process? I
+don’t know, but my gut tells me we need to do two main things.</p>
+
+<p>The first is to take the pressure off every now and then. Provide a
+temporal oasis where it’s OK not to worry about some approaching
+deadline. It has to be acceptable to relax, because if you aren’t
+relaxed you’re not going to learn from the practice.</p>
+
+<p>The second is to help folks learn how to play with code: how to make
+mistakes, how to improvise, how to reflect, and how to measure. This
+is hard: we’re trained to try to do things right, to play to the
+score, rather than improvise. I suspect that success here comes only
+after doing.</p>
+
+<p>So, my challenge for the day: see if you can carve out 45 to 60
+minutes to play with a small piece of code. You don’t necessarily have
+to look at performance: perhaps you could play with the structure, or
+the memory use, or the interface. In the end it doesn’t
+matter. Experiment, measure, improve.</p>
+
+<p>Practice.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dave Thomas (@PragDave)</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-31T00:00:00-06:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="/codekata//twitter.com/share" class="twitter-share-button" data-url="http://pragdave.github.io/codekata/kata/codekata-how-it-started/" data-via="" data-counturl="http://pragdave.github.io/codekata/kata/codekata-how-it-started/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/codekata/kata/kata-kumite-koan-and-dreyfus/" title="Previous Post: Kata, Kumite, Koan, and Dreyfus">&laquo; Kata, Kumite, Koan, and Dreyfus</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/codekata/kata/codekata-how-it-started/">CodeKata: How It Started</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata-kumite-koan-and-dreyfus/">Kata, Kumite, Koan, and Dreyfus</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata01-supermarket-pricing/">Kata01: Supermarket Pricing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata02-karate-chop/">Kata02: Karate Chop</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata03-how-big-how-fast/">Kata03: How Big? How Fast?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata04-data-munging/">Kata04: Data Munging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata05-bloom-filters/">Kata05: Bloom Filters</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata06-anagrams/">Kata06: Anagrams</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata07-howd-i-do/">Kata07: How'd I Do?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata08-conflicting-objectives/">Kata08: Conflicting Objectives</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata09-back-to-the-checkout/">Kata09: Back to the Checkout</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata10-hashes-vs-classes/">Kata10: Hashes vs. Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata11-sorting-it-out/">Kata11: Sorting It Out</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata12-best-sellers/">Kata12: Best Sellers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata13-counting-code-lines/">Kata13: Counting Code Lines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata14-tom-swift-under-the-milkwood/">Kata14: Tom Swift Under the Milkwood</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata15-a-diversion/">Kata15: A Diversion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata16-business-rules/">Kata16: Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata17-more-business-rules/">Kata17: More Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata18-transitive-dependencies/">Kata18: Transitive Dependencies</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata19-word-chains/">Kata19: Word Chains</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata20-klondike/">Kata20: Klondike</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata21-simple-lists/">Kata21: Simple Lists</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dave Thomas (@PragDave) -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pragdave';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pragdave.github.io/codekata/kata/codekata-how-it-started/';
+        var disqus_url = 'http://pragdave.github.io/codekata/kata/codekata-how-it-started/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

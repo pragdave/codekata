@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
   <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-02-03T00:21:51-06:00</updated>
+  <updated>2014-02-03T00:26:01-06:00</updated>
   <id>http://pragdave.github.io/codekata/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -12,5 +12,1729 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CodeKata: How It Started]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/codekata-how-it-started/"/>
+    <updated>2013-12-31T00:00:00-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/codekata-how-it-started</id>
+    <content type="html"><![CDATA[<p>(This is a long one. It explains how I discovered that something I do
+almost every day to improve my coding is actually a little ritual that
+has much in common with practice in the martial arts…)</p>
+
+<!-- more -->
+
+
+<p>This all starts with the way RubLog, some blogging software I once
+wrote. I wanted to experiment how it does searching (but this isn’t an
+article about searching, or about bit twiddling. Trust me). Because I
+eventually wanted to use cosine-based comparisons to find similar
+articles, I build vectors mapping word occurrences to each document in
+the blog. I basically ended up with a set of 1,200-1,500 bits for each
+document. To implement a basic ranked search, I needed to be able to
+perform a bitwise AND between each of these vectors and a vector
+containing the search terms, and then count the number of one-bits in
+the result.</p>
+
+<p>I had a spare 45 minutes last night (I took Zachary to his karate
+lesson, but there was no room in the parent’s viewing area), so I
+thought I’d play with this. First I tried storing the bit vectors
+different ways: it turns out (to my surprise) that storing them as an
+array of fixnums has almost exactly the same speed as storing them as
+the bits in a bignum. (Also, rather pleasingly, changing between the
+two representations involves altering just two lines of code). Because
+it marshals far more compactly, I decided to stick with the bignum.</p>
+
+<p>Then I had fun playing with the bit counting itself. The existing code
+uses the obvious algorithm:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">max_bit</span><span class="o">.</span><span class="n">times</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">count</span> <span class="o">+=</span> <span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just how slow was this? I wrote a simple testbed that generated one
+hundred 1,000 bit vectors, each with 20 random bits set, and timed the
+loop. For all 100, it took about .4s.</p>
+
+<p>Then I tried using the ‘divide-and-conquer’ counting algorithm from
+chapter 5 of Hacker’s Delight (modified to deal with chunking the
+Bignum into 30-bit words).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x3fffffff</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x55555555</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x0f0f0f0f</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x3f</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This ran about 2.5 times faster that the naive algorithm.</p>
+
+<p>Then I realized that when I was comparing a set of search times with
+just a few words in it, the bit vector would be very sparse. Each
+chunk in the loop above would be likely to be zero. So I added a test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x3fffffff</span>
+</span><span class='line'>  <span class="k">next</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">zero?</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x55555555</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x33333333</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x0f0f0f0f</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">&amp;</span> <span class="mh">0x3f</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I was seven times faster than the original. But my testbed was
+using vectors containing 20 set bits (out of 1,000). I changed it to
+generate timings with vectors containing 1, 2, 5, 10, 20, 100, and 900
+set bits. This got even better: I was up to a factor of 15 faster with
+1 or 2 bits in the vector.</p>
+
+<p>But if I could speed things up this much by eliminating zero chunks in
+the bit-twiddling algorithm could I do the same in the simple counting
+algorithm? I tried a third algorithm:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">((</span><span class="n">max_bit</span><span class="o">+</span><span class="mi">29</span><span class="p">)</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">offset</span><span class="o">|</span>
+</span><span class='line'>   <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="mi">30</span><span class="p">))</span> <span class="c1"># &amp; 0x3fffffff</span>
+</span><span class='line'>   <span class="k">next</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">zero?</span>
+</span><span class='line'>   <span class="mi">30</span><span class="o">.</span><span class="n">times</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">}</span>
+</span><span class='line'> <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The inner loop here is the same as for the original count, but I now
+count the bits in chunks of 30.</p>
+
+<p>This code performs identically to the bit-twiddling code for 1 set
+bit, and only slightly worse for 2 set bits. However. once the number
+of bits starts to grow (past about 5 for my given chunk size), the
+performance starts to tail off. At 100 bits it’s slower than the
+original naive count.</p>
+
+<p>So for my particular application, I could probably chose either of the
+chunked counting algorithms. Because the bit twiddling one scales up
+to larger numbers of bits, and because I’ll need that later on if I
+ever start doing the cosine-based matching of documents, I went with
+it.</p>
+
+<p>So what’s the point of all this?</p>
+
+<p>Yesterday I posted a <a href="http://pragdave.me/blog/2003/03/23/artifacting/">blog entry</a>
+about the importance of verbs. It said
+&ldquo;Often the true value of a thing isn’t the thing itself, but instead
+is the activity that created it.&rdquo; Chad Fowler picked this up and wrote
+a <a href="http://chadfowler.com/blog/2003/03/25/valueless-software/">wonderful piece</a>
+showing how this was true for musicians. And Brian
+Marick picked up of Chad’s piece to emphasize the value of practice
+when learning a creative process.</p>
+
+<p>At the same time, Andy and I had been discussing a set of music tapes
+he had. Originally designed to help musicians practice scales and
+arpeggios, these had been so popular that they now encompassed a whole
+spectrum of practice techniques. We were bemoaning the fact that it
+seemed unlikely that we’d be able to get developers to do the same: to
+buy some aid to help them practice programming. We just felt that
+practicing was not something that programmers did.</p>
+
+<p>Skip forward to this morning. In the shower, I got to thinking about
+this, and realized that my little 45 minute exploration of bit
+counting was actually a practice session. I wasn’t really worried
+about the performance of bit counting in the blog’s search algorithm;
+in reality it comes back pretty much instantaneously. Instead, I just
+wanted to play with some code and experiment with a technique I hadn’t
+used before. I did it in a simple, controlled environment, and I tried
+many different variations (more than I’ve listed here). And I’ve still
+got some more playing to do: I want to mess around with the effect of
+varying the chunk size, and I want to see if any of the other bit
+counting algorithms perform faster.</p>
+
+<p>What made this a practice session? Well, I had some time without
+interruptions. I had a simple thing I wanted to try, and I tried it
+many times. I looked for feedback each time so I could work to
+improve. There was no pressure: the code was effectively throwaway. It
+was fun: I kept making small steps forward, which motivated me to
+continue. Finally, I came out of it knowing more than when I went in.</p>
+
+<p>Ultimately it was having the free time that allowed me to practice. If
+the pressure was on, if there was a deadline to delivery the blog
+search functionality, then the existing performance would have been
+acceptable, and the practice would never have taken place. But those
+45 pressure-free minutes let me play.</p>
+
+<p>So how can we do this in the real world? How can we help developers do
+the practicing that’s clearly necessary in any creative process? I
+don’t know, but my gut tells me we need to do two main things.</p>
+
+<p>The first is to take the pressure off every now and then. Provide a
+temporal oasis where it’s OK not to worry about some approaching
+deadline. It has to be acceptable to relax, because if you aren’t
+relaxed you’re not going to learn from the practice.</p>
+
+<p>The second is to help folks learn how to play with code: how to make
+mistakes, how to improvise, how to reflect, and how to measure. This
+is hard: we’re trained to try to do things right, to play to the
+score, rather than improvise. I suspect that success here comes only
+after doing.</p>
+
+<p>So, my challenge for the day: see if you can carve out 45 to 60
+minutes to play with a small piece of code. You don’t necessarily have
+to look at performance: perhaps you could play with the structure, or
+the memory use, or the interface. In the end it doesn’t
+matter. Experiment, measure, improve.</p>
+
+<p>Practice.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata, Kumite, Koan, and Dreyfus]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus/"/>
+    <updated>2013-12-30T17:13:28-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus</id>
+    <content type="html"><![CDATA[<p>A week or so ago I posted a piece called CodeKata, suggesting that as
+developers we need to spend more time just practicing: writing
+throwaway code just to get the experience of writing it. I followed
+this up with a first exercise, an experiment in supermarket pricing.</p>
+
+<!-- more -->
+
+
+<p>Those articles generated some interest, both on other blogs and in
+e-mail. In particular, I’ve had a couple of wonderful exchanges with
+Bob Harwood. In turn, these have lead to a bit of research, and an
+interesting confluence of ideas.</p>
+
+<p>Kata (Japanese for form or pattern) are an exercise where the novice
+repeatedly tries to emulate a master. In karate, these kata are a
+sequence of basic moves (kicks, blocks, punches, and so on), strung
+together in a way that makes sense. You’ll never be attacked in such a
+way that you could repeat a kata to defend yourself: that isn’t the
+idea. Instead the idea is to practice the feel and to internalize the
+moves. (Interestingly, kata are not just used in the martial
+arts. Calligraphers also learn using kata, copying their masters’
+brush strokes.)</p>
+
+<p>Kata and other artificial exercises form a large part of the work done
+by a karate novice. They practice for hour after hour. (Interestingly,
+I was talking about this with my son’s karate sensei, and he explained
+that as well as the standard combinations of moves in kata, he often
+has his classes do combinations that don’t feel natural, or where the
+body isn’t correctly positioned at the end of one to enter the
+next. He believes that teaching what doesn’t work is an effective way
+to help them improvise what does work later).</p>
+
+<p>Once you get some way into your training, you start kumite, or
+sparring. Kumite is a supervised exercise between two students, or
+between a student and a master. Here they learn to assemble the basic
+moves into coherent sequences, combining offensive and defensive
+elements into something that works. While kata could be considered
+static, repeating the same sequence over and over, kumite is
+dynamic. Sparring continues throughout the rest of your training. It
+is interesting to watch the development of sparring as folks progress
+through the belt ranks. Beginners often seem to fall into the trap of
+being very rigid in their choice of moves. If a kick worked for them
+last time, then they’ll continue to use that kick over and over
+again. Similarly, some beginners attack and forget to defend, or spend
+all their time defending. After they become more experienced, their
+repertoire increases, and they learn to use appropriate moves which
+are strung together almost like a jazz improvisation: responding to
+their opponent but at the same time expressing their own plan of
+attack. Watching good black belts spar is fascinating; they manage to
+combine attacks and defenses in the same move, executing with both
+power and a great deal of subtleness.</p>
+
+<p>Then, to quote Bob Harwood &ldquo;Once a kata has been learned, then the
+kata needs to be forgotten. That is, at some point in studying Karate,
+typically the black belt level, the time comes to transcend the
+motions and seek meaning in the kata. The student discovers how
+his/her view of the world is reflected in their performance of kata,
+and (if lucky) they learn how to adapt the kata to new
+interpretations. As a student learns to do this, kata becomes more and
+more a part of their kumite (sparring). …the skill of self-discovery
+becomes part of their daily life. The study of koan is often used to
+promote this learning.&rdquo; Koans are questions without absolute answers
+which are used to break down assumptions and reveal underlying
+truths. The goal of a koan is not the answer, but thinking about the
+question. In the supermarket pricing example, when talking about “buy
+two, get the third free,” the question “does the third item have a
+price?” is something of a (minor league) koan.</p>
+
+<p>All of which brings us back to the Dreyfus model of skills acquisition
+(and you thought the title of this blog entry was the name of a law
+firm). The Dreyfus model suggests that there are five stages in the
+acquisition of mastery. We start at novice: unsure and with no
+experience. We don’t particularly want to know the “why,” we just want
+to be shown what to do. We need to know the rules, because we just
+want to achieve some goal. As we get more experience, and progress
+through the next three levels, we start to move beyond this immediate,
+mechanical level. We gain more understanding and start to be able to
+formulate our own action plans. Finally, when we achieve mastery, we
+have all that experience internalized, and we can work from
+intuition. We no longer need the rules to support us; instead we write
+the new rules. Andy has a great talk about this (Herding Racehorses
+and Racing Sheep, available from the JAOO website.)</p>
+
+<p>There’s a lot of obvious similarity between Dreyfus and the way people
+become masters of karate. The kata is rote learning, copying the
+master. Kumite is where you get to start applying the skills on your
+own. And then mastery, where you teach others, and where you use koan
+to attempt to discover underlying principles for yourself.</p>
+
+<p>So, I’m planning to change my taxonomy of challenges somewhat. I think
+that as developers we need all three of these levels: kata for the
+things we’re only just starting to learn, kumite for the things we
+think we know, and koan for when we want to dig deeper. To quote from
+Andy’s talk, “Experience comes from practice”.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata01: Supermarket Pricing]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing/"/>
+    <updated>2013-12-29T17:15:57-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing</id>
+    <content type="html"><![CDATA[<p>This kata arose from some discussions we’ve been having at the DFW
+Practioners meetings. The problem domain is something seemingly
+simple: pricing goods at supermarkets.</p>
+
+<!-- more -->
+
+
+<p>Some things in supermarkets have simple prices: this can of beans
+costs $0.65. Other things have more complex prices. For example:</p>
+
+<ul>
+<li>three for a dollar (so what’s the price if I buy 4, or 5?)</li>
+<li>$1.99/pound (so what does 4 ounces cost?)</li>
+<li>buy two, get one free (so does the third item have a price?)</li>
+</ul>
+
+
+<p>This kata involves no coding. The exercise is to experiment with
+various models for representing money and prices that are flexible
+enough to deal with these (and other) pricing schemes, and at the same
+time are generally usable (at the checkout, for stock management,
+order entry, and so on). Spend time considering issues such as:</p>
+
+<ul>
+<li>does fractional money exist?</li>
+<li>when (if ever) does rounding take place?</li>
+<li>how do you keep an audit trail of pricing decisions (and do you need
+to)?</li>
+<li>are costs and prices the same class of thing?</li>
+<li>if a shelf of 100 cans is priced using “buy two, get one free”, how
+do you value the stock?</li>
+</ul>
+
+
+<p>This is an ideal shower-time kata, but be careful. Some of the
+problems are more subtle than they first appear. I suggest that it
+might take a couple of weeks worth of showers to exhaust the main
+alternatives.</p>
+
+<h1>Goal</h1>
+
+<p>The goal of this kata is to practice a looser style of experimental
+modelling. Look for as many different ways of handling the issues as
+possible. Consider the various tradeoffs of each. What techniques use
+best for exploring these models? For recording them? How can you
+validate a model is reasonable?</p>
+
+<h2>What’s a Code Kata?</h2>
+
+<p>As a group, software developers don’t practice enough. Most of our
+learning takes place on the job, which means that most of our mistakes
+get made there as well. Other creative professions practice: artists
+carry a sketchpad, musicians play technical pieces, poets constantly
+rewrite works. In karate, where the aim is to learn to spar or fight,
+most of a student’s time is spent learning and refining basic
+moves. The more formal of these exercises are called kata.</p>
+
+<p>To help developers get the same benefits from practicing, we’re
+putting together a series of code kata: simple, artificial exercises
+which let us experiment and learn without the pressure of a production
+environment. Our suggestions for doing the kata are:</p>
+
+<ul>
+<li>find a place and time where you won’t be interrupted</li>
+<li>focus on the essential elements of the kata</li>
+<li>remember to look for feedback for every major decision</li>
+<li>if it helps, keep a journal of your progress</li>
+<li>have discussion groups with other developers, but try to have
+completed the kata first</li>
+</ul>
+
+
+<p>There are no right or wrong answers in these kata: the benefit comes
+from the process, not from the result.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata02: Karate Chop]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata02-karate-chop/"/>
+    <updated>2013-12-28T17:20:30-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata02-karate-chop</id>
+    <content type="html"><![CDATA[<p>A binary chop (sometimes called the more prosaic binary search) finds
+the position of value in a sorted array of values. It achieves some
+efficiency by halving the number of items under consideration each
+time it probes the values: in the first pass it determines whether the
+required value is in the top or the bottom half of the list of
+values. In the second pass in considers only this half, again dividing
+it in to two. It stops when it finds the value it is looking for, or
+when it runs out of array to search. Binary searches are a favorite of
+CS lecturers.</p>
+
+<!-- more -->
+
+
+<p>This Kata is straightforward. Implement a binary search routine (using
+the specification below) in the language and technique of your
+choice. Tomorrow, implement it again, using a totally different
+technique. Do the same the next day, until you have five totally
+unique implementations of a binary chop. (For example, one solution
+might be the traditional iterative approach, one might be recursive,
+one might use a functional style passing array slices around, and so
+on).</p>
+
+<h1>Goals</h1>
+
+<p>This Kata has three separate goals:</p>
+
+<ol>
+<li><p>As you’re coding each algorithm, keep a note of the kinds of error
+you encounter. A binary search is a ripe breeding ground for “off
+by one” and fencepost errors. As you progress through the week, see
+if the frequency of these errors decreases (that is, do you learn
+from experience in one technique when it comes to coding with a
+different technique?).</p></li>
+<li><p>What can you say about the relative merits of the various
+techniques you’ve chosen? Which is the most likely to make it in to
+production code? Which was the most fun to write? Which was the
+hardest to get working? And for all these questions, ask yourself
+“why?”.</p></li>
+<li><p>It’s fairly hard to come up with five unique approaches to a binary
+chop. How did you go about coming up with approaches four and five?
+What techniques did you use to fire those “off the wall” neurons?</p></li>
+</ol>
+
+
+<h1>Specification</h1>
+
+<p>Write a binary chop method that takes an integer search target and a
+sorted array of integers. It should return the integer index of the
+target in the array, or -1 if the target is not in the array. The
+signature will logically be:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>chop(int, array_of_int)  -&gt; int</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can assume that the array has less than 100,000 elements. For the
+purposes of this Kata, time and memory performance are not issues
+(assuming the chop terminates before you get bored and kill it, and
+that you have enough RAM to run it).</p>
+
+<h2>Test Data</h2>
+
+<p>Here is the Test::Unit code I used when developing my methods. Feel
+free to add to it. The tests assume that array indices start at
+zero. You’ll probably have to do a couple of global
+search-and-replaces to make this compile in your language of choice
+(unless your enlightened choice happens to be Ruby).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">test_chop</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">[]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="c1">#</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="c1">#</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span>  <span class="nb">chop</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">chop</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="o">]</span><span class="p">))</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata03: How Big? How Fast?]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast/"/>
+    <updated>2013-12-27T17:23:28-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast</id>
+    <content type="html"><![CDATA[<p>Rough estimation is a useful talent to possess. As you’re coding away,
+you may suddenly need to work out approximately how big a data
+structure will be, or how fast some loop will run. The faster you can
+do this, the less the coding flow will be disturbed.</p>
+
+<!-- more -->
+
+
+<p>So this is a simple kata: a series of questions, each asking for a
+rough answer. Try to work each out in your head. I’ll post my answers
+(and how I got them) in a week or so.</p>
+
+<h1>How Big?</h1>
+
+<ul>
+<li><p>roughly how many binary digits (bit) are required for the unsigned
+representation of:</p>
+
+<ul>
+<li>1,000</li>
+<li>1,000,000</li>
+<li>1,000,000,000</li>
+<li>1,000,000,000,000</li>
+<li>8,000,000,000,000</li>
+</ul>
+</li>
+<li><p>My town has approximately 20,000 residences. How much space is
+required to store the names, addresses, and a phone number for all
+of these (if we store them as characters)?</p></li>
+<li><p>I’m storing 1,000,000 integers in a binary tree. Roughly how many
+nodes and levels can I expect the tree to have? Roughly how much
+space will it occupy on a 32-bit architecture?</p></li>
+</ul>
+
+
+<h1>How Fast?</h1>
+
+<ul>
+<li><p>My copy of Meyer’s Object Oriented Software Construction has about
+1,200 body pages. Assuming no flow control or protocol overhead,
+about how long would it take to send it over an async 56k baud modem
+line?</p></li>
+<li><p>My binary search algorithm takes about 4.5mS to search a 10,000
+entry array, and about 6mS to search 100,000 elements. How long
+would I expect it to take to search 10,000,000 elements (assuming I
+have sufficient memory to prevent paging).</p></li>
+<li><p>Unix passwords are stored using a one-way hash function: the
+original string is converted to the ‘encrypted’ password string,
+which cannot be converted back to the original string. One way to
+attack the password file is to generate all possible cleartext
+passwords, applying the password hash to each in turn and checking
+to see if the result matches the password you’re trying to crack. If
+the hashes match, then the string you used to generate the hash is
+the original password (or at least, it’s as good as the original
+password as far as logging in is concerned). In our particular
+system, passwords can be up to 16 characters long, and there are 96
+possible characters at each position. If it takes 1mS to generate
+the password hash, is this a viable approach to attacking a
+password?</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata04: Data Munging]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata04-data-munging/"/>
+    <updated>2013-12-26T17:26:23-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata04-data-munging</id>
+    <content type="html"><![CDATA[<p>Martin Fowler gave me a hard time for Kata02, complaining that it was
+yet another single-function, academic exercise. Which, or course, it
+was. So this week let’s mix things up a bit.</p>
+
+<p>Here’s an exercise in three parts to do with real world data. Try hard
+not to read ahead—do each part in turn.</p>
+
+<!-- more -->
+
+
+<h1>Part One: Weather Data</h1>
+
+<p>In <a href="http://pragdave.github.io/codekata/data/04/weather.dat">weather.dat</a> you’ll find daily weather data
+for Morristown, NJ for June 2002. Download this text file, then write
+a program to output the day number (column one) with the smallest
+temperature spread (the maximum temperature is the second column, the
+minimum the third column).</p>
+
+<h1>Part Two: Soccer League Table</h1>
+
+<p>The file <a href="http://pragdave.github.io/codekata/data/04/football.dat">football.dat</a> contains the results
+from the English Premier League for 2001/2. The columns labeled ‘F’
+and ‘A’ contain the total number of goals scored for and against each
+team in that season (so Arsenal scored 79 goals against opponents, and
+had 36 goals scored against them). Write a program to print the name
+of the team with the smallest difference in ‘for’ and ‘against’ goals.</p>
+
+<h1>Part Three: DRY Fusion</h1>
+
+<p>Take the two programs written previously and factor out as much common
+code as possible, leaving you with two smaller programs and some kind
+of shared functionality.</p>
+
+<h1>Kata Questions</h1>
+
+<ul>
+<li><p>To what extent did the design decisions you made when writing the
+original programs make it easier or harder to factor out common
+code?</p></li>
+<li><p>Was the way you wrote the second program influenced by writing the
+first?</p></li>
+<li><p>Is factoring out as much common code as possible always a good
+thing? Did the readability of the programs suffer because of this
+requirement? How about the maintainability?</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata05: Bloom Filters]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata05-bloom-filters/"/>
+    <updated>2013-12-25T17:35:17-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata05-bloom-filters</id>
+    <content type="html"><![CDATA[<p>There are many circumstances where we need to find out if something is
+a member of a set, and many algorithms for doing it. If the set is
+small, you can use bitmaps. When they get larger, hashes are a useful
+technique. But when the sets get big, we start bumping in to
+limitations. Holding 250,000 words in memory for a spell checker might
+be too big an overhead if your target environment is a PDA or cell
+phone. Keeping a list of web-pages visited might be extravagant when
+you get up to tens of millions of pages. Fortunately, there’s a
+technique that can help.</p>
+
+<!-- more -->
+
+
+<p>Bloom filters are a 30-year-old statistical way of testing for
+membership in a set. They greatly reduce the amount of storage you
+need to represent the set, but at a price: they’ll sometimes report
+that something is in the set when it isn’t (but it’ll never do the
+opposite; if the filter says that the set doesn’t contain your object,
+you know that it doesn’t). And the nice thing is you can control the
+accuracy; the more memory you’re prepared to give the algorithm, the
+fewer false positives you get. I once wrote a spell checker for a
+PDP-11 which stored a dictionary of 80,000 words in 16kbytes, and I
+very rarely saw it let though an incorrect word. (Update: I must have
+mis-remembered these figures, because they are not in line with the
+theory. Unfortunately, I can no longer read the 8” floppies holding
+the source, so I can’t get the correct numbers. Let’s just say that I
+got a decent sized dictionary, along with the spell checker, all in
+under 64k.)</p>
+
+<p>Bloom filters are very simple. Take a big array of bits, initially all
+zero. Then take the things you want to look up (in our case we’ll use
+a dictionary of words). Produce ‘n’ independent hash values for each
+word. Each hash is a number which is used to set the corresponding bit
+in the array of bits. Sometimes there’ll be clashes, where the bit
+will already be set from some other word. This doesn’t matter.</p>
+
+<p>To check to see of a new word is already in the dictionary, perform
+the same hashes on it that you used to load the bitmap. Then check to
+see if each of the bits corresponding to these hash values is set. If
+any bit is not set, then you never loaded that word in, and you can
+reject it.</p>
+
+<p>The Bloom filter reports a false positive when a set of hashes for a
+word all end up corresponding to bits that were set previously by
+other words. In practice this doesn’t happen too often as long as the
+bitmap isn’t too heavily loaded with one-bits (clearly if every bit is
+one, then it’ll give a false positive on every lookup). There’s a
+discussion of the math in Bloom filters at
+<a href="www.cs.wisc.edu/~cao/papers/summary-cache/node8.html">www.cs.wisc.edu/~cao/papers/summary-cache/node8.html</a>.</p>
+
+<p>So, this kata is fairly straightforward. Implement a Bloom filter
+based spell checker. You’ll need some kind of bitmap, some hash
+functions, and a simple way of reading in the dictionary and then the
+words to check. For the hash function, remember that you can always
+use something that generates a fairly long hash (such as MD5) and then
+take your smaller hash values by extracting sequences of bits from the
+result. On a Unix box you can find a list of words in /usr/dict/words
+(or possibly in /usr/share/dict/words). For others, I’ve put a word
+list up <a href="http://pragdave.github.io/codekata/data/wordlist.txt">here</a>.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+
+<p>Play with using different numbers of hashes, and with different bitmap sizes.</p>
+
+<p>Part two of the exercise is optional. Try generating random
+5-character words and feeding them in to your spell checker. For each
+word that it says it OK, look it up in the original dictionary. See
+how many false positives you get.</p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>This word list comes from SCOWL, which is Copyright 2000-2011 by Kevin Atkinson<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata06: Anagrams]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata06-anagrams/"/>
+    <updated>2013-12-24T17:46:21-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata06-anagrams</id>
+    <content type="html"><![CDATA[<p>Back to non-realistic coding this week (sorry, Martin). Let’s solve
+some crossword puzzle clues.</p>
+
+<!-- more -->
+
+
+<p>In England, I used to waste hour upon hour doing newspaper
+crosswords. As crossword fans will know, English cryptic crosswords
+have a totally different feel to their American counterparts: most
+clues involve punning or word play, and there are lots of anagrams to
+work through. For example, a recent Guardian crossword had:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  Down:
+</span><span class='line'>    ..
+</span><span class='line'>    21. Most unusual form of arrest (6)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The hint is the phrase ‘form of,’ indicating that we’re looking for an
+anagram. Sure enough ‘arrest’ has six letters, and can be arranged
+nicely into ‘rarest,’ meaning ‘most unusual.’ (Other anagrams include
+raster, raters, Sartre, and starer)</p>
+
+<p>A while back we had a thread on the Ruby mailing list about finding
+anagrams, and I’d like to resurrect it here. The challenge is fairly
+simple: given a file containing one word per line, print out all the
+combinations of words that are anagrams; each line in the output
+contains all the words from the input that are anagrams of each
+other. For example, your program might include in its output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kinship pinkish
+</span><span class='line'>  enlist inlets listen silent
+</span><span class='line'>  boaster boaters borates
+</span><span class='line'>  fresher refresh
+</span><span class='line'>  sinks skins
+</span><span class='line'>  knits stink
+</span><span class='line'>  rots sort</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you run this on the word list <a href="http://pragdave.github.io/codekata/data/wordlist.txt">here</a> you should
+find 20683 sets of anagrams (a total of 48162 words), including
+all-time favorites such as</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>crepitus cuprites pictures piecrust
+</span><span class='line'>paste pates peats septa spate tapes tepas
+</span><span class='line'>punctilio unpolitic
+</span><span class='line'>sunders undress</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For added programming pleasure, find the longest words that are
+anagrams, and find the set of anagrams containing the most words (so
+“parsley players replays sparely” would not win, having only four
+words in the set).</p>
+
+<h1>Kata Objectives</h1>
+
+<p>Apart from having some fun with words, this kata should make you think
+somewhat about algorithms. The simplest algorithms to find all the
+anagram combinations may take inordinate amounts of time to do the
+job. Working though alternatives should help bring the time down by
+orders of magnitude. To give you a possible point of comparison, I
+hacked a solution together in 25 lines of Ruby. It runs on
+<a href="http://pragdave.github.io/codekata/data/wordlist.txt">this wordlist</a> in 1.8s on a 1.7GHz i7.
+It’s also an interesting exercise in testing: can you write unit tests
+to verify that your code is working correctly before setting it to
+work on the full dictionary.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata07: How'd I Do?]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata07-howd-i-do/"/>
+    <updated>2013-12-23T18:04:19-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata07-howd-i-do</id>
+    <content type="html"><![CDATA[<p>The last couple of kata have been programming challenges; let’s move
+back into mushier, people-oriented stuff this week.</p>
+
+<!-- more -->
+
+
+<p>This kata is about reading code critically—our own code. Here’s the
+challenge. Find a piece of code you wrote last year sometime. It
+should be a decent sized chunk, perhaps 500 to 1,000 lines long. Pick
+code which isn’t still fresh in your mind.</p>
+
+<p>Now we need to do some acting. Read through this code three
+times. Each time through, pretend something different. Each time, jot
+down notes on the stuff you find.</p>
+
+<ul>
+<li><p>The first time through, pretend that the person who wrote this code
+is the best programmer you know. Look for all the examples of great
+code in the program.</p></li>
+<li><p>The second time through, pretend that the person who wrote this code
+is the worst programmer you know. Look for all the examples of
+horrible code and bad design.</p></li>
+<li><p>The third (and last) time though, pretend that you’ve been told that
+this code contains serious bugs, and that the client is going to sue
+you to bankruptcy unless you fix them. Look for every potential bug
+in the code.</p></li>
+</ul>
+
+
+<p>Now look at the notes you made. What is the nature of the good stuff
+you found? Would you find similar good stuff in the code you’re
+writing today. What about the bad stuff; are similar pieces of code
+sneaking in to your current code too. And finally, did you find any
+bugs in the old code?  If so, are any of them things that that you’d
+want to fix now that you’ve found them. Are any of them systematic
+errors that you might still be making today?</p>
+
+<h1>Moving Forward By Looking Back</h1>
+
+<p>Perhaps you’re not like me, but whenever I try this exercise I find
+things that pleasantly surprise me and things that make me cringe in
+embarrassment. I find the occasional serious bug (along with more
+frequent less but serious issues). So I try to make a point of looking
+back at my code fairly frequently.</p>
+
+<p>However, doing this six months after you write code is not the best
+way of developing good software today. So the underlying challenge of
+this kata is this: how can we get into the habit of critically
+reviewing the code that we write, as we write it? And can we use the
+techniques of reading code with different expectations (good coder,
+bad coder, and bug hunt) when we’re reviewing our colleagues code?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata08: Conflicting Objectives]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives/"/>
+    <updated>2013-12-22T18:06:35-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives</id>
+    <content type="html"><![CDATA[<p>Why do we write code? At one level, we’re trying to solve some
+particular problem, to add some kind of value to the world. But often
+there are also secondary objectives: the code has to solve the
+problem, and it also has to be fast, or easy to maintain, or extend,
+or whatever. So let’s look at that.</p>
+
+<!-- more -->
+
+
+<p>For this kata, we’re going to write a program to solve a simple
+problem, and we’re going to write it with three different
+sub-objectives. Our program is going do process the dictionary we used
+in previous kata, this time looking for all six letter words which are
+composed of two concatenated smaller words. For example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  al + bums =&gt; albums
+</span><span class='line'>  bar + ely =&gt; barely
+</span><span class='line'>  be + foul =&gt; befoul
+</span><span class='line'>  con + vex =&gt; convex
+</span><span class='line'>  here + by =&gt; hereby
+</span><span class='line'>  jig + saw =&gt; jigsaw
+</span><span class='line'>  tail + or =&gt; tailor
+</span><span class='line'>  we + aver =&gt; weaver</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Write the program three times.</p>
+
+<ul>
+<li>The first time, make program as readable as you can make it.</li>
+<li>The second time, optimize the program to run fast fast as you can make it.</li>
+<li>The third time, write as extendible a program as you can.</li>
+</ul>
+
+
+<p>Now look back at the three programs and think about how each of the
+three subobjectives interacts with the others. For example, does
+making the program as fast as possible make it more or less readable?
+Does it make easier to extend? Does making the program readable make
+it slower or faster, flexible or rigid? And does making it extendible
+make it more or less readable, slower or faster? Are any of these
+correlations stronger than others? What does this mean in terms of
+optimizations you may perform on the code you write?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata09: Back to the Checkout]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout/"/>
+    <updated>2013-12-21T18:08:19-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout</id>
+    <content type="html"><![CDATA[<p>Back to the supermarket. This week, we’ll implement the code for a
+checkout system that handles pricing schemes such as “apples cost 50
+cents, three apples cost $1.30.”</p>
+
+<!-- more -->
+
+
+<p>Way back in KataOne we thought about how to model the various options
+for supermarket pricing. We looked at things such as “three for a
+dollar,” “$1.99 per pound,” and “buy two, get one free.”</p>
+
+<p>This week, let’s implement the code for a supermarket checkout that
+calculates the total price of a number of items. In a normal
+supermarket, things are identified using Stock Keeping Units, or
+SKUs. In our store, we’ll use individual letters of the alphabet (A,
+B, C, and so on). Our goods are priced individually. In addition, some
+items are multipriced: buy n of them, and they’ll cost you y
+cents. For example, item ‘A’ might cost 50 cents individually, but
+this week we have a special offer: buy three ‘A’s and they’ll cost you
+$1.30. In fact this week’s prices are:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  Item   Unit      Special
+</span><span class='line'>         Price     Price
+</span><span class='line'>  --------------------------
+</span><span class='line'>    A     50       3 for 130
+</span><span class='line'>    B     30       2 for 45
+</span><span class='line'>    C     20
+</span><span class='line'>    D     15</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our checkout accepts items in any order, so that if we scan a B, an A,
+and another B, we’ll recognize the two B’s and price them at 45 (for a
+total price so far of 95). Because the pricing changes frequently, we
+need to be able to pass in a set of pricing rules each time we start
+handling a checkout transaction.</p>
+
+<p>The interface to the checkout should look like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">co</span> <span class="o">=</span> <span class="no">CheckOut</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">pricing_rules</span><span class="p">)</span>
+</span><span class='line'><span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span class='line'><span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">:</span>    <span class="p">:</span>
+</span><span class='line'><span class="n">price</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here’s a set of unit tests for a Ruby implementation. The helper
+method price lets you specify a sequence of items using a string,
+calling the checkout’s scan method on each item in turn before finally
+returning the total price.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">TestPrice</span> <span class="o">&lt;</span> <span class="ss">Test</span><span class="p">:</span><span class="ss">:Unit</span><span class="o">::</span><span class="no">TestCase</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">price</span><span class="p">(</span><span class="n">goods</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span> <span class="o">=</span> <span class="no">CheckOut</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">RULES</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">goods</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">//</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">item</span><span class="o">|</span> <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">total</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">test_totals</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span>  <span class="mi">0</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span> <span class="mi">50</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span> <span class="mi">80</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AB&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">115</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;CDBA&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AA&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">130</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAA&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAAA&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">230</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAAAA&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">260</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAAAAA&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAAB&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAABB&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">190</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;AAABBD&quot;</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span><span class="mi">190</span><span class="p">,</span> <span class="n">price</span><span class="p">(</span><span class="s2">&quot;DABABA&quot;</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">test_incremental</span>
+</span><span class='line'>    <span class="n">co</span> <span class="o">=</span> <span class="no">CheckOut</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">RULES</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">assert_equal</span><span class="p">(</span>  <span class="mi">0</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>  <span class="n">assert_equal</span><span class="p">(</span> <span class="mi">50</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">);</span>  <span class="n">assert_equal</span><span class="p">(</span> <span class="mi">80</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">130</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">co</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">);</span>  <span class="n">assert_equal</span><span class="p">(</span><span class="mi">175</span><span class="p">,</span> <span class="n">co</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are lots of ways of implementing this kind of algorithm; if you
+have time, experiment with several.</p>
+
+<h1>Objectives of the Kata</h1>
+
+<p>To some extent, this is just a fun little problem. But underneath the
+covers, it’s a stealth exercise in decoupling. The challenge
+description doesn’t mention the format of the pricing rules. How can
+these be specified in such a way that the checkout doesn’t know about
+particular items and their pricing strategies? How can we make the
+design flexible enough so that we can add new styles of pricing rule
+in the future?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata10: Hashes vs. Classes]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes/"/>
+    <updated>2013-12-20T18:10:37-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes</id>
+    <content type="html"><![CDATA[<p>If we’re programming business applications in a language such as Java
+or C#, we’re used to constructing and using classes to manipulate our
+business objects. Is this always the right way to go, or would a less
+formal approach serves us well sometimes?</p>
+
+<!-- more -->
+
+
+<p>This week’s topic doesn’t involve a coding challenge. Instead, we’re
+thinking about design and tradeoffs.</p>
+
+<p>Imagine that you’ve been asked to write an export utility for a large
+and complex database. The export has to read data from 30 or so tables
+(perhaps 100 columns are potentially written to each export
+record). Some of the exported data is written exactly as read from the
+database, but other exported data must be calculated. In addition, if
+certain flag fields have specific values, then additional data must be
+read from the database to complete an export row.</p>
+
+<p>The export data must obviously be correct, but the client is also
+asking for a flexible solution; their world changes a lot.</p>
+
+<p>One solution is to use existing business objects and existing
+persistence mechanisms, and to use higher-level classes to aggregate
+their results into a form that can be used to generate export
+rows. This higher level object could perform the calculations
+necessary for the virtual fields, and read in additional business
+objects if the flag fields dictate.</p>
+
+<p>An alternative solution might be to read the data row at a time into a
+Hash (an associative array, dictionary, …) using ad-hoc queries,
+keying the hash on the field names. A separate pass could then be made
+to perform any necessary calculations, storing the results back in to
+the same hash. Additional data could be read from the database if the
+flag fields are set, again storing the results in the hash. The
+contents of the hash are then used to write the export record, and we
+loop back to do the next row.</p>
+
+<p>This kata is a thought experiment. What are the top three advantages
+and top three disadvantages of the two approaches? If you’re been
+using classes to hold data in your business applications, what would
+the impact be if you were to switch to hashes, and vice versa? Is this
+issue related to the static/dynamic typing debate?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata11: Sorting It Out]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata11-sorting-it-out/"/>
+    <updated>2013-12-19T18:12:09-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata11-sorting-it-out</id>
+    <content type="html"><![CDATA[<p>Just because we need to sort something doesn’t necessarily mean we
+need to use a conventional sorting algorithm.</p>
+
+<!-- more -->
+
+
+<p>We use sorting routines all the time; putting customer records in to
+name order, arranging orders by value (and even sorting the letters in
+a word back in KataSix). Most of the time we (wisely) use one of the
+sort routines built in to our language’s library (such as C’s qsort
+and Java’s java.Collections.sort). After all, very clever folks spent
+a lot of time getting these library routines tuned for speed and/or
+memory usage.</p>
+
+<p>However, there are times when whipping up a sort of our own can
+outperform these generic routines. Our challenge this week is to
+implement a couple of different sorts. (However, at the risk of giving
+the game away, these sorts both have something in common).</p>
+
+<h1>Sorting Balls</h1>
+
+<p>In the Pragmatic Lottery (motto: There’s One Born Every Minute, and it
+Might Just Be You!), we select each week’s winning combination by
+drawing balls. There are sixty balls, numbered (not surprisingly, as
+we are programmers) 0 to 59. The balls are drawn by the personable,
+but somewhat distracted, Daisy Mae. As a result, some weeks five
+numbers are drawn, while other weeks seven, nine, or even fifteen
+balls make it to the winner’s rack. Regardless of the number of balls
+drawn, our viewers need to see the list of winning numbers in sorted
+order just as soon as possible. So, your challenge is to come up with
+some code that accepts each number as it is drawn and presents the
+sorted list of numbers so far. The tests might look something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">rack</span> <span class="o">=</span> <span class="no">Rack</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">assert_equal</span><span class="p">(</span><span class="o">[]</span><span class="p">,</span> <span class="n">rack</span><span class="o">.</span><span class="n">balls</span><span class="p">)</span>
+</span><span class='line'><span class="n">rack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</span><span class='line'><span class="n">assert_equal</span><span class="p">(</span><span class="o">[</span> <span class="mi">20</span> <span class="o">]</span><span class="p">,</span> <span class="n">rack</span><span class="o">.</span><span class="n">balls</span><span class="p">)</span>
+</span><span class='line'><span class="n">rack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span class='line'><span class="n">assert_equal</span><span class="p">(</span><span class="o">[</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span> <span class="o">]</span><span class="p">,</span> <span class="n">rack</span><span class="o">.</span><span class="n">balls</span><span class="p">)</span>
+</span><span class='line'><span class="n">rack</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</span><span class='line'><span class="n">assert_equal</span><span class="p">(</span><span class="o">[</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span> <span class="o">]</span><span class="p">,</span> <span class="n">rack</span><span class="o">.</span><span class="n">balls</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Sorting Characters</h1>
+
+<p>Our resident conspiracy expert, Dr. X, is looking for hidden messages
+in the collected publications of Hugh Hefner. Dr. X believes the
+message is hidden in the individual letters, so rather than get
+distracted by the words, he’s asked us to write a program to take a
+block of text and return the letters it contains, sorted. Given the
+text:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>When not studying nuclear physics, Bambi likes to play
+</span><span class='line'>beach volleyball.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>our program would return:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>aaaaabbbbcccdeeeeeghhhiiiiklllllllmnnnnooopprsssstttuuvwyyyy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The program ignores punctuation, and maps upper case to lower case.</p>
+
+<p>Are there any ways to perform this sort cheaply, and without using
+built-in libraries?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata12: Best Sellers]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata12-best-sellers/"/>
+    <updated>2013-12-18T18:16:42-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata12-best-sellers</id>
+    <content type="html"><![CDATA[<p>A GedankenKata this week: no code needed (although writing short prototypes might help you come to a conclusion).</p>
+
+<!-- more -->
+
+
+<p>Say you’re writing code for a high-colume online site that sells
+things (something like Amazon). Your site is wildly popular, and you
+sell millions of items each day.</p>
+
+<p>The marketing department wants the home page to display a top-ten list
+of the best selling items over the last 24 hours, with the list being
+updated each hour.</p>
+
+<p>How would you implement this?</p>
+
+<ul>
+<li><p>Are there any changes you could ask for to make the implementation easier?</p></li>
+<li><p>What would be the impact if they later came back and said:</p>
+
+<ul>
+<li>only update the list once per day; or</li>
+<li>we need the list updated in real time: each time the home page is
+displayed we need the list to reflect the 24 hours up until that
+point.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>This kata might be deeper than it first appears. You might want to
+consider database vs. in-memory solutions, data structures that allow
+aging, time-space tradeoffs, and the like.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata13: Counting Code Lines]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata13-counting-code-lines/"/>
+    <updated>2013-12-17T18:18:41-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata13-counting-code-lines</id>
+    <content type="html"><![CDATA[<p>Counting lines of code in Java source is not quite as simple as it seems.</p>
+
+<!-- more -->
+
+
+<p>This week let’s write something vaguely useful: a utility that counts
+the number of lines of actual code in a Java source file. For the
+purpose of this exercise, a line is counted if it contains something
+other than whitespace or text in a comment. Some simple examples:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'>  <span class="o">-</span>   <span class="c1">// This file contains 3 lines of code</span>
+</span><span class='line'>  <span class="mi">1</span>   <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Dave</span> <span class="o">{</span>
+</span><span class='line'>  <span class="o">-</span>     <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  -      * count the number of lines in a file</span>
+</span><span class='line'><span class="cm">  -      */</span>
+</span><span class='line'>  <span class="mi">2</span>     <span class="kt">int</span> <span class="n">countLines</span><span class="o">(</span><span class="n">File</span> <span class="n">inFile</span><span class="o">);</span> <span class="c1">// not the real signature!</span>
+</span><span class='line'>  <span class="mi">3</span>   <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and…</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'>  <span class="o">-</span>   <span class="cm">/*****</span>
+</span><span class='line'><span class="cm">  -   * This is a test program with 5 lines of code</span>
+</span><span class='line'><span class="cm">  -   *  \/* no nesting allowed!</span>
+</span><span class='line'><span class="cm">  -   //*****//***/</span><span class="c1">// Slightly pathological comment ending...</span>
+</span><span class='line'>  <span class="o">-</span>
+</span><span class='line'>  <span class="mi">1</span>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Hello</span> <span class="o">{</span>
+</span><span class='line'>  <span class="mi">2</span>      <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// gotta love Java</span>
+</span><span class='line'>  <span class="o">-</span>          <span class="c1">// Say hello</span>
+</span><span class='line'>  <span class="mi">3</span>        <span class="n">System</span><span class="o">.</span><span class="cm">/*wait*/</span><span class="n">out</span><span class="o">.</span><span class="cm">/*for*/</span><span class="n">println</span><span class="cm">/*it*/</span><span class="o">(</span><span class="s">&quot;Hello/*&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="mi">4</span>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">-</span>
+</span><span class='line'>  <span class="mi">5</span>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Remember that Java comments are either <code>//</code> to the end of line, or
+<code>/*</code> to the next <code>*/</code>. The block comments do not nest. There may be
+multiple <code>/* … */</code> comments on a line. Whitespace includes tabs, spaces,
+carriage returns, and vertical tabs. Oh, and remember that comment
+start sequences that appear inside Java strings should be ignored.</p>
+
+<h1>Goals of the Kata</h1>
+
+<p>The mixture of line-based things (single line comments, blank lines,
+and so on) with the stream-based block comments can make solutions
+slightly ugly. While coding your solution, consider the structure of
+your code, and see how well it fits the structure of the problem. As
+with most of these kata, consider coding multiple alternative
+implementations. Does what you learned on the first tries affect your
+approach to subsequent ones?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata14: Tom Swift Under the Milkwood]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/"/>
+    <updated>2013-12-16T18:21:56-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood</id>
+    <content type="html"><![CDATA[<p>Trigrams can be used to mutate text into new, surreal, forms. But what
+heuristics do we apply to get a reasonable result?</p>
+
+<!-- more -->
+
+
+<p>As a boy, one of my treats was go to the shops on a Saturday and spend
+part of my allowance on books; for a nine-year old, I had quite a
+collection of Tom Swift and Hardy Boys. Wouldn’t it be great to be
+able to create more and more of these classic books, to be able to
+generate a new Tom Swift adventure on demand?</p>
+
+<p>OK, perhaps not. But that won’t stop us trying. I coded up a quick
+program to generate some swash-buckling scientific adventure on
+demand. It came up with:</p>
+
+<blockquote><p>…it was in the wind that was what he thought was his companion. I<br/>think would be a good one and accordingly the ship their situation<br/>improved. Slowly so slowly that it beat the band! You’d think no one<br/>was a low voice. “Don’t take any of the elements and the inventors of<br/>the little Frenchman in the enclosed car or cabin completely fitted up<br/>in front of the gas in the house and wringing her hands. “I’m sure<br/>they’ll fall!” She looked up at them. He dug a mass of black vapor<br/>which it had refused to accept any. As for Mr. Swift as if it goes too<br/>high I’ll warn you and you can and swallow frequently. That will make<br/>the airship was shooting upward again and just before the raid<br/>wouldn’t have been instrumental in capturing the scoundrels right out<br/>of jail.</p></blockquote>
+
+
+<p>Stylistically, it’s Victor Appleton meets Dylan Thomas. Technically,
+it’s all done with trigrams.</p>
+
+<p>Trigram analysis is very simple. Look at each set of three adjacent
+words in a document. Use the first two words of the set as a key, and
+remember the fact that the third word followed that key. Once you’ve
+finished, you know the list of individual words that can follow each
+two word sequence in the document. For example, given the input:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>I wish I may I wish I might</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might generate:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="s2">&quot;I wish&quot;</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;wish I&quot;</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;may&quot;</span><span class="p">,</span> <span class="s2">&quot;might&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;may I&quot;</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;wish&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;I may&quot;</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;I&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This says that the words “I wish” are twice followed by the word “I”,
+the words “wish I” are followed once by “may” and once by “might” and
+so on.</p>
+
+<p>To generate new text from this analysis, choose an arbitrary word pair
+as a starting point. Use these to look up a random next word (using
+the table above) and append this new word to the text so far. This now
+gives you a new word pair at the end of the text, so look up a
+potential next word based on these. Add this to the list, and so
+on. In the previous example, we could start with “I may”. The only
+possible next word is “I”, so now we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last two words are “may I”, so the next word is “wish”. We then
+look up “I wish”, and find our choice is constrained to another “I”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we look up “wish I”, and find we have a choice. Let’s choose “may”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">may</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we’re back where we started from, with “I may.” Following the same
+sequence, but choosing “might” this time, we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">might</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point we stop, as no sequence starts “I might.”</p>
+
+<p>Given a short input text, the algorithm isn’t too interesting. Feed it
+a book, however, and you give it more options, so the resulting output
+can be surprising.</p>
+
+<p>For this kata, try implementing a trigram algorithm that generates a
+couple of hundred words of text using a book-sized file as
+input. Project Gutenberg is a good source of online books (<em>Tom Swift
+and His Airship</em> is here). Be warned that these files have DOS line
+endings (carriage return followed by newline).</p>
+
+<h1>Objectives</h1>
+
+<p>Kata’s are about trying something many times. In this one, what we’re
+experimenting with is not just the code, but the heuristics of
+processing the text. What do we do with punctuation? Paragraphs? Do we
+have to implement backtracking if we chose a next word that turns out
+to be a dead end?</p>
+
+<blockquote><p>I’ll fire the signal and the fun will commence…</p></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata15: A Diversion]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata15-a-diversion/"/>
+    <updated>2013-12-15T18:28:25-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata15-a-diversion</id>
+    <content type="html"><![CDATA[<p>Think of binary numbers: sequences of 0&rsquo;s and 1&rsquo;s. How many n-digit
+binary numbers are there that don&rsquo;t have two adjacent 1 bits? For
+example, here are the three-digit numbers:</p>
+
+<p><strong><code>000  001  010</code></strong><code> 011</code> <strong><code>100  101</code></strong><code> 110  111</code></p>
+
+<p>Five of the possible eight combinations meet the criteria</p>
+
+<p>What is the number for sequences of length 4, 5, 10, n?</p>
+
+<p>Having worked out the pattern, there&rsquo;s a second part to the question:
+can you prove why the relationship exists?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata16: Business Rules]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata16-business-rules/"/>
+    <updated>2013-12-14T18:33:29-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata16-business-rules</id>
+    <content type="html"><![CDATA[<p>How can you tame a wild (and changing) set of business rules?</p>
+
+<!-- more -->
+
+
+<p>Imagine you’re writing an order processing application for a large
+company. In the past, this company used a fairly random mixture of
+manual and ad-hoc automated business practices to handle orders; they
+now want to put all these various ways of hanadling orders together
+into one whole: your application. However, they (and their customers)
+have come to cherish the diversity of their business rules, and so
+they tell you that you’ll have to bring all these rules forward into
+the new system.</p>
+
+<p>When you go in to meet the existing order entry folks, you discover
+that their business practices border on chaotic: no two product lines
+have the same set of processing rules. To make it worse, most of the
+rules aren’t written down: you’re often told something like “oh, Carol
+on the second floor handles that kind of order.”</p>
+
+<p>During first day of meetings, you’ve decided to focus on payments, and
+in particular on the processing required when a payment was received
+by the company. You come home, exhausted, with a legal pad full of
+rule snippets such as:</p>
+
+<ul>
+<li>If the payment is for a physical product, generate a packing slip
+for shipping.</li>
+<li>If the payment is for a book, create a duplicate packing slip for
+the royalty department.</li>
+<li>If the payment is for a membership, activate that membership.</li>
+<li>If the payment is an upgrade to a membership, apply the upgrade.</li>
+<li>If the payment is for a membership or upgrade, e-mail the owner and
+inform them of the activation/upgrade.</li>
+<li>If the payment is for the video “Learning to Ski,” add a free “First
+Aid” video to the packing slip (the result of a court decision in
+1997).</li>
+<li>If the payment is for a physical product or a book, generate a
+commission payment to the agent.</li>
+</ul>
+
+
+<p>and so on, and so on, for seven long, long, yellow pages.</p>
+
+<p>And each day, to your horror, you gather more and more pages of these
+rules.</p>
+
+<p>Now you’re faced with implementing this system. The rules are
+complicated, and fairly arbitrary. What’s more, you know that they’re
+going to change: once the system goes live, all sorts of special cases
+will come out of the woodwork.</p>
+
+<h1>Objectives</h1>
+
+<p>How can you tame these wild business rules? How can you build a system
+that will be flexible enough to handle both the complexity and the
+need for change? And how can you do it without condemming yourself to
+years and years of mindless support?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata17: More Business Rules]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata17-more-business-rules/"/>
+    <updated>2013-12-13T18:35:30-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata17-more-business-rules</id>
+    <content type="html"><![CDATA[<p>The rules that specify the overall processing of an order can be
+complex too, particularly as they often involve waiting around for
+things to happen.</p>
+
+<!-- more -->
+
+
+<p>In Kata Sixteen we had a look at the business rules that applied when
+we received payment for various kinds of product. Handling payments is
+just a small part of the overall workflow required to process an
+order. For the company whose application we’re looking at, order
+processing looks something like:</p>
+
+<ul>
+<li><p>If we accept an order over the web, then we have to wait for payment
+to arrive, unless it’s a credit-card order. In the case of credit
+card orders, we can process the order immediately and ship the
+goods, but only if the goods are in stock. If they are not currently
+in stock, we have to delay processing credit card orders until the
+become available again.</p></li>
+<li><p>We can receive a check in payment of an existing order, in which
+case we ship the goods (unless they are not in stock, in which case
+we hold the check until the goods become available).</p></li>
+<li><p>We can receive a purchase order (PO) for a new order (we only accept
+these from companies with an established credit account). In this
+case we ship the goods (assuming they are in stock) and also
+generate an invoice against the PO. At some point in the future
+we’ll receive payment against this invoice and the order will be
+complete.</p></li>
+<li><p>At any time before the goods are shipped the customer may cancel an
+order.</p></li>
+</ul>
+
+
+<p>Each step in this process may occur many days after the previous
+step. For example, we may take an order over the web on Monday,
+receive a check for this order on Thursday, then ship the goods and
+deposit the check when the item is received from our own suppliers on
+the following Tuesday.</p>
+
+<p>How can we design an application to support these kinds of rules? Of
+course, businesses change the rules all the time, so we better make
+sure that anything we come up makes it easy to update the workflow.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kata18: Transitive Dependencies]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies/"/>
+    <updated>2013-12-12T18:37:27-06:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies</id>
+    <content type="html"><![CDATA[<p>Let’s write some code that calculates how dependencies propagate
+between things such as classes in a program.</p>
+
+<!-- more -->
+
+
+<p>Highly coupled code is code where the dependencies between things are
+dense, lots of things depend on other things. This kind of program is
+hard to understand, tough to maintain, and tends to be fragile,
+breaking easily when things change.</p>
+
+<p>There are many different kinds of coupling in code. One of the easiest
+to work with programatically is <em>static coupling</em>, where we’re
+concerned with the relationships between chunks of source
+code. Simplisticly, we can say that class A is statically coupled to
+class B if the compiler needs the definition of B in order to compile</p>
+
+<p>In many languages, static dependencies can be determined by source
+code analysis. Tools such as makedepend (for C programs) and JDepend
+(for Java) look for explicit dependencies in the source and list them
+out.</p>
+
+<p>One of the insidious things about dependencies is that they are
+transitive—if A depends on B and B depends on C, then A also depends
+on C. So, let’s write some code that calculates the full set of
+dependencies for a group of items. The code takes as input a set of
+lines where the first token is the name of an item. The remaining
+tokens are the names of things that this first item depends on. Given
+the following input, we know that A directly depends on B and C, B
+depends on C and E, and so on.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  A   B   C
+</span><span class='line'>  B   C   E
+</span><span class='line'>  C   G
+</span><span class='line'>  D   A   F
+</span><span class='line'>  E   F
+</span><span class='line'>  F   H</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The program should use this data to calculate the full set of
+dependencies. For example, looking at B, we see it directly depends on
+C and E. C in turn relies on G, E relies on F, and F relies on H. This
+means that B ultimately relies on C, E, F, G, and H. In fact, the full
+set of dependencies for the previous example is:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  A   B C E F G H
+</span><span class='line'>  B   C E F G H
+</span><span class='line'>  C   G
+</span><span class='line'>  D   A B C E F G H
+</span><span class='line'>  E   F H
+</span><span class='line'>  F   H</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let’s express this using unit tests. The following code assumes that
+our dependency calculator is a class with an add_direct() method to
+add the direct dependencies for an item, and a dependencies_for()
+method to return the full list of dependencies for an item. The code
+uses Ruby’s %w{…} construct, which builds an array of strings from its
+argument.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">test_basic</span>
+</span><span class='line'>  <span class="n">dep</span> <span class="o">=</span> <span class="no">Dependencies</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="sx">%w{ B C }</span> <span class="p">)</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="sx">%w{ C E }</span> <span class="p">)</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="sx">%w{ G   }</span> <span class="p">)</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="sx">%w{ A F }</span> <span class="p">)</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="sx">%w{ F   }</span> <span class="p">)</span>
+</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="sx">%w{ H   }</span> <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ B C E F G H }</span><span class="p">,</span>   <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ C E F G H }</span><span class="p">,</span>     <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ G }</span><span class="p">,</span>             <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ A B C E F G H }</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ F H }</span><span class="p">,</span>           <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ H }</span><span class="p">,</span>             <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Stop reading now, and start coding. Once you’ve got your code working,
+try feeding it the following dependencies.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">A</span> <span class="n">B</span>
+</span><span class='line'>  <span class="n">B</span> <span class="n">C</span>
+</span><span class='line'>  <span class="n">C</span> <span class="n">A</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Does it work correctly? If not, ask yourself is this is a condition
+you should have considered during testing.</p>
+
+<p>Once you’ve got your code working with all the various test cases you
+can imagine, let’s think for a minute about performance. Say we were
+using this code to find all the relationships between the inhabitants
+of the United Kingdom. How would your code perform with 55-60 million
+items?</p>
+]]></content>
+  </entry>
   
 </feed>

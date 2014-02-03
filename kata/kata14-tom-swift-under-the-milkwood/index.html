@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Kata14: Tom Swift Under the Milkwood - CodeKata</title>
+  <meta name="author" content="Dave Thomas (@PragDave)">
+
+  
+  <meta name="description" content="Trigrams can be used to mutate text into new, surreal, forms. But what
+heuristics do we apply to get a reasonable result? As a boy, one of my treats &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood">
+  <link href="/codekata/favicon.png" rel="icon">
+  <link href="/codekata/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/codekata/atom.xml" rel="alternate" title="CodeKata" type="application/atom+xml">
+  <script src="/codekata/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/codekata/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/codekata/">CodeKata</a></h1>
+  
+    <h2>Experience is the<br/><em>only</em> teacher</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/codekata/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pragdave.github.io/codekata" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/codekata/">Blog</a></li>
+  <li><a href="/codekata/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Kata14: Tom Swift Under the Milkwood</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-16T18:21:56-06:00" pubdate data-updated="true">Dec 16<span>th</span>, 2013</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://pragdave.github.io/codekata">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Trigrams can be used to mutate text into new, surreal, forms. But what
+heuristics do we apply to get a reasonable result?</p>
+
+<!-- more -->
+
+
+<p>As a boy, one of my treats was go to the shops on a Saturday and spend
+part of my allowance on books; for a nine-year old, I had quite a
+collection of Tom Swift and Hardy Boys. Wouldn’t it be great to be
+able to create more and more of these classic books, to be able to
+generate a new Tom Swift adventure on demand?</p>
+
+<p>OK, perhaps not. But that won’t stop us trying. I coded up a quick
+program to generate some swash-buckling scientific adventure on
+demand. It came up with:</p>
+
+<blockquote><p>…it was in the wind that was what he thought was his companion. I<br/>think would be a good one and accordingly the ship their situation<br/>improved. Slowly so slowly that it beat the band! You’d think no one<br/>was a low voice. “Don’t take any of the elements and the inventors of<br/>the little Frenchman in the enclosed car or cabin completely fitted up<br/>in front of the gas in the house and wringing her hands. “I’m sure<br/>they’ll fall!” She looked up at them. He dug a mass of black vapor<br/>which it had refused to accept any. As for Mr. Swift as if it goes too<br/>high I’ll warn you and you can and swallow frequently. That will make<br/>the airship was shooting upward again and just before the raid<br/>wouldn’t have been instrumental in capturing the scoundrels right out<br/>of jail.</p></blockquote>
+
+
+<p>Stylistically, it’s Victor Appleton meets Dylan Thomas. Technically,
+it’s all done with trigrams.</p>
+
+<p>Trigram analysis is very simple. Look at each set of three adjacent
+words in a document. Use the first two words of the set as a key, and
+remember the fact that the third word followed that key. Once you’ve
+finished, you know the list of individual words that can follow each
+two word sequence in the document. For example, given the input:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>I wish I may I wish I might</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You might generate:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="s2">&quot;I wish&quot;</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;wish I&quot;</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;may&quot;</span><span class="p">,</span> <span class="s2">&quot;might&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;may I&quot;</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;wish&quot;</span><span class="o">]</span>
+</span><span class='line'><span class="s2">&quot;I may&quot;</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;I&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This says that the words “I wish” are twice followed by the word “I”,
+the words “wish I” are followed once by “may” and once by “might” and
+so on.</p>
+
+<p>To generate new text from this analysis, choose an arbitrary word pair
+as a starting point. Use these to look up a random next word (using
+the table above) and append this new word to the text so far. This now
+gives you a new word pair at the end of the text, so look up a
+potential next word based on these. Add this to the list, and so
+on. In the previous example, we could start with “I may”. The only
+possible next word is “I”, so now we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last two words are “may I”, so the next word is “wish”. We then
+look up “I wish”, and find our choice is constrained to another “I”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we look up “wish I”, and find we have a choice. Let’s choose “may”.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">may</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we’re back where we started from, with “I may.” Following the same
+sequence, but choosing “might” this time, we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">may</span> <span class="n">I</span> <span class="n">wish</span> <span class="n">I</span> <span class="n">might</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point we stop, as no sequence starts “I might.”</p>
+
+<p>Given a short input text, the algorithm isn’t too interesting. Feed it
+a book, however, and you give it more options, so the resulting output
+can be surprising.</p>
+
+<p>For this kata, try implementing a trigram algorithm that generates a
+couple of hundred words of text using a book-sized file as
+input. Project Gutenberg is a good source of online books (<em>Tom Swift
+and His Airship</em> is here). Be warned that these files have DOS line
+endings (carriage return followed by newline).</p>
+
+<h1>Objectives</h1>
+
+<p>Kata’s are about trying something many times. In this one, what we’re
+experimenting with is not just the code, but the heuristics of
+processing the text. What do we do with punctuation? Paragraphs? Do we
+have to implement backtracking if we chose a next word that turns out
+to be a dead end?</p>
+
+<blockquote><p>I’ll fire the signal and the fun will commence…</p></blockquote>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dave Thomas (@PragDave)</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-16T18:21:56-06:00" pubdate data-updated="true">Dec 16<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="/codekata//twitter.com/share" class="twitter-share-button" data-url="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/" data-via="" data-counturl="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/codekata/kata/kata15-a-diversion/" title="Previous Post: Kata15: A Diversion">&laquo; Kata15: A Diversion</a>
+      
+      
+        <a class="basic-alignment right" href="/codekata/kata/kata13-counting-code-lines/" title="Next Post: Kata13: Counting Code Lines">Kata13: Counting Code Lines &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/codekata/kata/codekata-how-it-started/">CodeKata: How It Started</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata-kumite-koan-and-dreyfus/">Kata, Kumite, Koan, and Dreyfus</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata01-supermarket-pricing/">Kata01: Supermarket Pricing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata02-karate-chop/">Kata02: Karate Chop</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata03-how-big-how-fast/">Kata03: How Big? How Fast?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata04-data-munging/">Kata04: Data Munging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata05-bloom-filters/">Kata05: Bloom Filters</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata06-anagrams/">Kata06: Anagrams</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata07-howd-i-do/">Kata07: How'd I Do?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata08-conflicting-objectives/">Kata08: Conflicting Objectives</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata09-back-to-the-checkout/">Kata09: Back to the Checkout</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata10-hashes-vs-classes/">Kata10: Hashes vs. Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata11-sorting-it-out/">Kata11: Sorting It Out</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata12-best-sellers/">Kata12: Best Sellers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata13-counting-code-lines/">Kata13: Counting Code Lines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata14-tom-swift-under-the-milkwood/">Kata14: Tom Swift Under the Milkwood</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata15-a-diversion/">Kata15: A Diversion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata16-business-rules/">Kata16: Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata17-more-business-rules/">Kata17: More Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata18-transitive-dependencies/">Kata18: Transitive Dependencies</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata19-word-chains/">Kata19: Word Chains</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata20-klondike/">Kata20: Klondike</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata21-simple-lists/">Kata21: Simple Lists</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dave Thomas (@PragDave) -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pragdave';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/';
+        var disqus_url = 'http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

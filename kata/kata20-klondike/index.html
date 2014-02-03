@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Kata20: Klondike - CodeKata</title>
+  <meta name="author" content="Dave Thomas (@PragDave)">
+
+  
+  <meta name="description" content="Experiment with different heuristics for playing the solitaire game Klondike. The solitaire game Klondike is probably the most widely played in the &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pragdave.github.io/codekata/kata/kata20-klondike">
+  <link href="/codekata/favicon.png" rel="icon">
+  <link href="/codekata/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/codekata/atom.xml" rel="alternate" title="CodeKata" type="application/atom+xml">
+  <script src="/codekata/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/codekata/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/codekata/">CodeKata</a></h1>
+  
+    <h2>Experience is the<br/><em>only</em> teacher</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/codekata/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pragdave.github.io/codekata" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/codekata/">Blog</a></li>
+  <li><a href="/codekata/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Kata20: Klondike</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-10T18:44:34-06:00" pubdate data-updated="true">Dec 10<span>th</span>, 2013</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://pragdave.github.io/codekata">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Experiment with different heuristics for playing the solitaire game Klondike.</p>
+
+<!-- more -->
+
+
+<p>The solitaire game Klondike is probably the most widely played in the
+world (particularly if you’re a Window’s user, where it has been
+available since Windows 3.1). It’s a simple game.</p>
+
+<p>Cards are dealt face down onto the seven piles in the tableau. The
+first pile receives one card, the next two, up to the seventh pile,
+which not surprisingly has seven cards initially. The top card on each
+pile is turned face-up, and the undealt cards are placed on the Stock
+pile, all face down. Here’s a picture of the game (52kb) if you
+haven’t seen it before.</p>
+
+<p><span class='caption-wrapper'><img src="/codekata/images/klondike.jpg" title="From+www.bvssolitaire.com" ><span class='caption-text'>From www.bvssolitaire.com</span></span></p>
+
+<p>The idea is to build up four piles of cards in their suits on the
+foundation area (one pile for the clubs, one for the diamonds, and so
+on). The piles must start with the ace and end with the king.</p>
+
+<p>The available moves (in no particular order) are:</p>
+
+<ul>
+<li><p>If the Stock becomes empty, turn the entire discard pile over and
+make it the new Stock.</p></li>
+<li><p>Turn over the top card of the Stock and place it face-up on the
+Discard pile.</p></li>
+<li><p>Move a card from the tableau or discard pile to one of the
+foundation piles. If the foundation pile is empty, only an Ace can
+be placed there, otherwise only the next highest card in the
+appropriate suit can be placed (so if a foundation pile is currently
+showing a four of hearts, only the five of hearts may be placed
+there).</p></li>
+<li><p>Move the top card of the discard pile to one of the tableau
+piles. This card must be one less in rank and opposite in color to
+the card at the top of the destination tableau.</p></li>
+<li><p>Move one or more cards from one tableau pile to another. If multiple
+cards are moved, they must be a sequence ascending in rank and
+alternating in color. The card moved (or the top of the sequence
+moved) must be one less in rank and opposite in color to the card at
+the top of the destination tableau. If the move leaves a face-down
+card to the top of the original pile, turn it over.</p></li>
+<li><p>If a move leaves a tableau pile empty, an exposed King at the top of
+a tableau or discard pile, or a sequence starting with a King on a
+tableau pile, may be moved to it.</p></li>
+</ul>
+
+
+<p>So, in the game pictured about, a possible first set of moves might be:</p>
+
+<ul>
+<li><p>Move the Queen of Diamonds onto the King of Clubs.</p></li>
+<li><p>This leaves the first pile in the tableau empty, so the combined
+King/Queen can be moved to it, and the card originally beneath the
+King is turned over.</p></li>
+<li><p>The Six of Spades can be moved on to the Seven of Diamonds,
+and the card beneath the six revealed.</p></li>
+<li><p>The top card of the stoke can be turned over and placed on the
+discard pile.</p></li>
+</ul>
+
+
+<p>The game is won when all cards are moved to the foundation, and lost
+when the only remaining moves form an endless loop.</p>
+
+<p>The game is simple to play, but the strategy isn’t immediately
+obvious. For example, is it always a good idea to move a card from the
+tableau to the foundation, or is it sometimes better to leave it there
+to give yourself something to build down on? Is it a good idea to make
+a move which leaves a tableau pile empty if you don’t immediately have
+a King to move into the gap? If you have two possible moves which will
+result in exposing a new tableau card, should you expose the one on
+the longest or shortest tableau?</p>
+
+<p>This kata is in two parts.</p>
+
+<ul>
+<li><p>Come up with an infrastructure so you can have the computer deal and
+play games of Klondike.</p></li>
+<li><p>Use that infrastructure to experiment with strategies to see if you
+can increase the number of times you win (perhaps you could tabulate
+the number of times the machine wins a random set of 1,000 games for
+each strategy you try).</p></li>
+</ul>
+
+
+<h1>Objectives</h1>
+
+<p>At one level, this is an exercise in design—how can the basic game be
+modeled in code? Where should the validation of moves be located (in
+the cards, in the various piles, in some kind of game overseer, or …)?
+How can we detect that we’ve lost?</p>
+
+<p>Once the basic game is in place, it becomes an exercise in
+imagination: what strategies can be applied, and how do various
+sub-strategies interact?</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Dave Thomas (@PragDave)</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-10T18:44:34-06:00" pubdate data-updated="true">Dec 10<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="/codekata//twitter.com/share" class="twitter-share-button" data-url="http://pragdave.github.io/codekata/kata/kata20-klondike/" data-via="" data-counturl="http://pragdave.github.io/codekata/kata/kata20-klondike/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/codekata/kata/kata21-simple-lists/" title="Previous Post: Kata21: Simple Lists">&laquo; Kata21: Simple Lists</a>
+      
+      
+        <a class="basic-alignment right" href="/codekata/kata/kata19-word-chains/" title="Next Post: Kata19: Word Chains">Kata19: Word Chains &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/codekata/kata/codekata-how-it-started/">CodeKata: How It Started</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata-kumite-koan-and-dreyfus/">Kata, Kumite, Koan, and Dreyfus</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata01-supermarket-pricing/">Kata01: Supermarket Pricing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata02-karate-chop/">Kata02: Karate Chop</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata03-how-big-how-fast/">Kata03: How Big? How Fast?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata04-data-munging/">Kata04: Data Munging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata05-bloom-filters/">Kata05: Bloom Filters</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata06-anagrams/">Kata06: Anagrams</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata07-howd-i-do/">Kata07: How'd I Do?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata08-conflicting-objectives/">Kata08: Conflicting Objectives</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata09-back-to-the-checkout/">Kata09: Back to the Checkout</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata10-hashes-vs-classes/">Kata10: Hashes vs. Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata11-sorting-it-out/">Kata11: Sorting It Out</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata12-best-sellers/">Kata12: Best Sellers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata13-counting-code-lines/">Kata13: Counting Code Lines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata14-tom-swift-under-the-milkwood/">Kata14: Tom Swift Under the Milkwood</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata15-a-diversion/">Kata15: A Diversion</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata16-business-rules/">Kata16: Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata17-more-business-rules/">Kata17: More Business Rules</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata18-transitive-dependencies/">Kata18: Transitive Dependencies</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata19-word-chains/">Kata19: Word Chains</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata20-klondike/">Kata20: Klondike</a>
+      </li>
+    
+      <li class="post">
+        <a href="/codekata/kata/kata21-simple-lists/">Kata21: Simple Lists</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dave Thomas (@PragDave) -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pragdave';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pragdave.github.io/codekata/kata/kata20-klondike/';
+        var disqus_url = 'http://pragdave.github.io/codekata/kata/kata20-klondike/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

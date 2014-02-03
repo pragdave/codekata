@@ -1,12 +1,104 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata21-simple-lists/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata20-klondike/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata19-word-chains/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata17-more-business-rules/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata16-business-rules/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata15-a-diversion/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata13-counting-code-lines/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata12-best-sellers/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata11-sorting-it-out/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata07-howd-i-do/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata06-anagrams/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata05-bloom-filters/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata04-data-munging/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata02-karate-chop/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
+        <loc>http://pragdave.github.io/codekata/kata/codekata-how-it-started/</loc>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
+    </url>
+    <url>
         <loc>http://pragdave.github.io/codekata/blog/archives/</loc>
-        <lastmod>2014-02-03T00:20:40-06:00</lastmod>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
     </url>
     <url>
         <loc>http://pragdave.github.io/codekata/</loc>
-        <lastmod>2014-02-03T00:20:40-06:00</lastmod>
+        <lastmod>2014-02-03T00:25:21-06:00</lastmod>
     </url>
     <url>
         <loc>http://pragdave.github.io/codekata/robots.txt</loc>
