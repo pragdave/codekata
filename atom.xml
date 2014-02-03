@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
   <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-02-03T00:35:52-06:00</updated>
+  <updated>2014-02-03T00:39:38-06:00</updated>
   <id>http://pragdave.github.io/codekata/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -223,7 +223,7 @@ matter. Experiment, measure, improve.</p>
     <link href="http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus/"/>
     <updated>2013-12-30T17:13:28-06:00</updated>
     <id>http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus</id>
-    <content type="html"><![CDATA[<p>A week or so ago I posted <a href="codekata-how-it-started/">a piece</a>
+    <content type="html"><![CDATA[<p>A week or so ago posted <a href="http://pragdave.github.io/codekata/kata/codekata-how-it-started/">a piece</a>
 called CodeKata, suggesting that as
 developers we need to spend more time just practicing: writing
 throwaway code just to get the experience of writing it. I followed
