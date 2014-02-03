@@ -1,6 +1,32 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
 
-header[role=banner] h2 {
+header[role=banner] h2, 
+h1.entry-title, 
+.heading, 
+body>header h1, h1, h2, h3, h4, h5, h6  {
     font-family: 'PT Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+h1.entry-title {
+  font-size: 2em !important;
+  color: rgb(51,51,51);
+}             
+
+h1 {
+   font-size: 1.8em;
+   line-height: 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+   margin-bottom: 0.4em;
+   margin-top: 0.6em;
+}
+
+article header {
+  margin-bottom: 0.7em !important;
+}  
+
+p, article blockquote, ul, ol {
+    margin-bottom: 0.7em;
 }
