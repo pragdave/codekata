@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://pragdave.github.io/codekata/sitemap.xml 
