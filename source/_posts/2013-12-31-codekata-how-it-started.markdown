@@ -12,7 +12,7 @@ has much in common with practice in the martial arts…)
 
 <!-- more -->
 
-This all starts with the way RubLog, some blogging software I once
+This all starts with RubLog, some blogging software I once
 wrote. I wanted to experiment how it does searching (but this isn’t an
 article about searching, or about bit twiddling. Trust me). Because I
 eventually wanted to use cosine-based comparisons to find similar
