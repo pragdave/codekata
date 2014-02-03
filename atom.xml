@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
   <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-02-03T00:51:16-06:00</updated>
+  <updated>2014-02-03T00:52:26-06:00</updated>
   <id>http://pragdave.github.io/codekata/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -25,7 +25,7 @@ has much in common with practice in the martial arts…)</p>
 <!-- more -->
 
 
-<p>This all starts with the way RubLog, some blogging software I once
+<p>This all starts with RubLog, some blogging software I once
 wrote. I wanted to experiment how it does searching (but this isn’t an
 article about searching, or about bit twiddling. Trust me). Because I
 eventually wanted to use cosine-based comparisons to find similar
