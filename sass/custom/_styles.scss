@@ -12,6 +12,11 @@ header[role=banner] {
 header[role=banner] {
     h1, h2 {
         font-family: 'Merienda', cursive;
+        text-shadow:
+          -1px -1px 0 rgb(51,51,51),  
+           1px -1px 0 rgb(51,51,51),
+          -1px  1px 0 rgb(51,51,51),
+           1px  1px 0 rgb(51,51,51);
     }
     h1 { font-weight: 400; }
     h2 { font-weight: 400; }
