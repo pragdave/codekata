@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
   <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-04-14T12:33:36-05:00</updated>
+  <updated>2014-04-14T12:35:07-05:00</updated>
   <id>http://pragdave.github.io/codekata/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[CodeKata]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/xxx/"/>
+    <link href="http://pragdave.github.io/codekata/kata/codekata-intro/"/>
     <updated>2014-04-14T01:00:00-05:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/xxx</id>
+    <id>http://pragdave.github.io/codekata/kata/codekata-intro</id>
     <content type="html"><![CDATA[<p><img class="right" src="http://pragdave.github.io/codekata/images/kitten2.jpg"></p>
 
 <p>How do you get to be a great musician? It helps to know the theory,
