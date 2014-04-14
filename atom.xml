@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
   <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-02-04T12:44:02-06:00</updated>
+  <updated>2014-04-14T12:33:36-05:00</updated>
   <id>http://pragdave.github.io/codekata/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -12,6 +12,133 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CodeKata]]></title>
+    <link href="http://pragdave.github.io/codekata/kata/xxx/"/>
+    <updated>2014-04-14T01:00:00-05:00</updated>
+    <id>http://pragdave.github.io/codekata/kata/xxx</id>
+    <content type="html"><![CDATA[<p><img class="right" src="http://pragdave.github.io/codekata/images/kitten2.jpg"></p>
+
+<p>How do you get to be a great musician? It helps to know the theory,
+and to understand the mechanics of your instrument. It helps to have
+talent. But ultimately, greatness comes from practicing; applying the
+theory over and over again, using feedback to get better every time.</p>
+
+<p>How do you get to be an All-Star sports person? Obviously fitness and
+talent help. But the great athletes spend hours and hours every day,
+practicing.</p>
+
+<p>But in the software industry we take developers trained in the theory
+and throw them straight in to the deep-end, working on a project. It’s
+like taking a group of fit kids and telling them that they have four
+quarters to beat the Redskins (hey, we manage by objectives,
+right?). In software we do our practicing on the job, and that’s why
+we make mistakes on the job. We need to find ways of splitting the
+practice from the profession. We need practice sessions.</p>
+
+<h3>The Kata</h3>
+
+<p>What makes a good practice session? You need time without
+interruptions, and a simple thing you want to try. You need to try it
+as many times as it takes, and be comfortable making mistakes. You
+need to look for feedback each time so you can work to improve. There
+needs to be no pressure: this is why it is hard to practice in a
+project environment. it helps to keep it fun: make small steps forward
+when you can. Finally, you’ll recognize a good practice session
+because you’ll came out of it knowing more than when you went in.</p>
+
+<p>Code Kata is an attempt to bring this element of practice to software
+development. A kata is an exercise in karate where you repeat a form
+many, many times, making little improvements in each. The intent
+behind code kata is similar. Each is a short exercise (perhaps 30
+minutes to an hour long). Some involve programming, and can be coded
+in many different ways. Some are open ended, and involve thinking
+about the issues behind programming. These are unlikely to have a
+single correct answer. I add a new kata every week or so. Invest some
+time in your craft and try them.</p>
+
+<p>Remember that the point of the kata is not arriving at a correct
+answer. The point is the stuff you learn along the way. The goal is
+the practice, not the solution.</p>
+
+<h3>Links</h3>
+
+<ul>
+<li><p><a href="http://pragdave.github.io/codekata/kata/codekata-how-it-started">A description of how this all started</a></p></li>
+<li><p>Sometimes ‘kata’ isn’t quite the right word; <a href="http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus">karate uses other techniques to teach too</a>.</p></li>
+</ul>
+
+
+<h3>The Kata</h3>
+
+<ul>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing">Kata 1: Supermarket
+pricing</a>. Pricing looks easy, but
+scratch the surface and there are some interesting issues to
+consider.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata02-karate-chop">Kata 2: Karate Chop</a>. A binary chop
+algorithm is fairly boring. Until you have to implement it using
+five totally different techniques.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast">Kata 3: How Big, How Fast?</a> Quick estimation
+is invaluable when it comes to making design and implementation
+decisions. Here are some questions to make you turn over the
+envelope.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata04-data-munging">Kata 4: Data Munging</a>. Implement two simple data
+extraction routines, and see how much they have in common.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata05-bloom-filters">Kata 5: Bloom Filters</a>. Implement a simple
+hash-based lookup mechanism and explore its characteristics.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata06-anagrams">Kata 6: Anagrams</a>. Find all the anagram combinations
+in a dictionary.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata07-howd-i-do">Kata 7: Reviewing</a>. What does our code look like
+through critical eyes, and how can we make our eyes more critical?</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives">Kata 8: Objectives</a>. What effects do
+our objectives have on the way we write code?</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout">Kata 9: Checkout</a>. Back to the
+supermarket. This week, we’ll implement the code for a checkout
+system that handles pricing schemes such as &ldquo;apples cost 50 cents,
+three apples cost $1.30.&rdquo;</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes">Kata 10: Hash vs. Class</a>. Is it always
+correct to use (for example) classes and objects to structure
+complex business objects, or couple simpler structures (hash as
+Hashes) do the job?</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata11-sorting-it-out">Kata 11: Sorting it Out</a>. Just because we need
+to sort something doesn’t necessarily mean we need to use a
+conventional sorting algorithm.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata12-best-sellers">Kata 12: Best Sellers</a>. Consider the
+implementation of a top-ten best sellers list for a high volume web
+store.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata13-counting-code-lines">Kata 13: Counting Lines</a>. Counting lines
+of code in Java source is not quite as simple as it seems.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood">Kata 14: Trigrams</a>. Generating
+text using trigram analysis lets us experiment with different
+heuristics. (And it let&rsquo;s us create new, original Tom Swift stories…)</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata15-a-diversion">Kata 15: Playing with bits</a>. A diversion to
+discover the pattern in some bit sequences.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata16-business-rules">Kata 16: Business Rules</a>. How can you tame a
+wild (and changing) set of business rules?</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata17-more-business-rules">Kata 17: More Business Rules</a>. The rules
+that specify the overall processing of an order can be complex too,
+particularly as they often involve waiting around for things to
+happen.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies">Kata 18: Dependencies</a>. Let’s write
+some code that calculates how dependencies propagate between things
+such as classes in a program.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata19-word-chains">Kata 19: Word chains</a>. Write a program that solves
+word chain puzzles (cat → cot → dot → dog).</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata20-klondike">Kata 20: Klondike</a>. Experiment with various
+heuristics for playing the game Klondike.</p></li>
+<li><p><a href="http://pragdave.github.io/codekata/kata/kata21-simple-lists">Kata 21: Simple Lists</a>. Play with different
+implementations of a simple list.</p></li>
+</ul>
+
+
+<p>I have to admit that I’m nervous doing this. My hope is that folks
+will work on the kata for a while before discussing them; much of the
+benefit comes from the little &ldquo;a-ha!&rdquo; moments along the way. So, it’ll
+be interesting to see how (and if) the discussion develops.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CodeKata: How It Started]]></title>
@@ -1372,7 +1499,7 @@ generate a new Tom Swift adventure on demand?</p>
 program to generate some swash-buckling scientific adventure on
 demand. It came up with:</p>
 
-<blockquote><p>…it was in the wind that was what he thought was his companion. I<br/>think would be a good one and accordingly the ship their situation<br/>improved. Slowly so slowly that it beat the band! You’d think no one<br/>was a low voice. “Don’t take any of the elements and the inventors of<br/>the little Frenchman in the enclosed car or cabin completely fitted up<br/>in front of the gas in the house and wringing her hands. “I’m sure<br/>they’ll fall!” She looked up at them. He dug a mass of black vapor<br/>which it had refused to accept any. As for Mr. Swift as if it goes too<br/>high I’ll warn you and you can and swallow frequently. That will make<br/>the airship was shooting upward again and just before the raid<br/>wouldn’t have been instrumental in capturing the scoundrels right out<br/>of jail.</p></blockquote>
+<blockquote><p>…it was in the wind that was what he thought was his companion. I think would be a good one and accordingly the ship their situation improved. Slowly so slowly that it beat the band! You’d think no one was a low voice. “Don’t take any of the elements and the inventors of the little Frenchman in the enclosed car or cabin completely fitted up in front of the gas in the house and wringing her hands. “I’m sure they’ll fall!” She looked up at them. He dug a mass of black vapor which it had refused to accept any. As for Mr. Swift as if it goes too high I’ll warn you and you can and swallow frequently. That will make the airship was shooting upward again and just before the raid wouldn’t have been instrumental in capturing the scoundrels right out of jail.</p></blockquote>
 
 
 <p>Stylistically, it’s Victor Appleton meets Dylan Thomas. Technically,
@@ -1600,141 +1727,6 @@ the following Tuesday.</p>
 <p>How can we design an application to support these kinds of rules? Of
 course, businesses change the rules all the time, so we better make
 sure that anything we come up makes it easy to update the workflow.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Kata18: Transitive Dependencies]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies/"/>
-    <updated>2013-12-12T18:37:27-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies</id>
-    <content type="html"><![CDATA[<p>Let’s write some code that calculates how dependencies propagate
-between things such as classes in a program.</p>
-
-<!-- more -->
-
-
-<p>Highly coupled code is code where the dependencies between things are
-dense, lots of things depend on other things. This kind of program is
-hard to understand, tough to maintain, and tends to be fragile,
-breaking easily when things change.</p>
-
-<p>There are many different kinds of coupling in code. One of the easiest
-to work with programatically is <em>static coupling</em>, where we’re
-concerned with the relationships between chunks of source
-code. Simplisticly, we can say that class A is statically coupled to
-class B if the compiler needs the definition of B in order to compile</p>
-
-<p>In many languages, static dependencies can be determined by source
-code analysis. Tools such as makedepend (for C programs) and JDepend
-(for Java) look for explicit dependencies in the source and list them
-out.</p>
-
-<p>One of the insidious things about dependencies is that they are
-transitive—if A depends on B and B depends on C, then A also depends
-on C. So, let’s write some code that calculates the full set of
-dependencies for a group of items. The code takes as input a set of
-lines where the first token is the name of an item. The remaining
-tokens are the names of things that this first item depends on. Given
-the following input, we know that A directly depends on B and C, B
-depends on C and E, and so on.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>  A   B   C
-</span><span class='line'>  B   C   E
-</span><span class='line'>  C   G
-</span><span class='line'>  D   A   F
-</span><span class='line'>  E   F
-</span><span class='line'>  F   H</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The program should use this data to calculate the full set of
-dependencies. For example, looking at B, we see it directly depends on
-C and E. C in turn relies on G, E relies on F, and F relies on H. This
-means that B ultimately relies on C, E, F, G, and H. In fact, the full
-set of dependencies for the previous example is:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>  A   B C E F G H
-</span><span class='line'>  B   C E F G H
-</span><span class='line'>  C   G
-</span><span class='line'>  D   A B C E F G H
-</span><span class='line'>  E   F H
-</span><span class='line'>  F   H</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let’s express this using unit tests. The following code assumes that
-our dependency calculator is a class with an add_direct() method to
-add the direct dependencies for an item, and a dependencies_for()
-method to return the full list of dependencies for an item. The code
-uses Ruby’s %w{…} construct, which builds an array of strings from its
-argument.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">test_basic</span>
-</span><span class='line'>  <span class="n">dep</span> <span class="o">=</span> <span class="no">Dependencies</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="sx">%w{ B C }</span> <span class="p">)</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="sx">%w{ C E }</span> <span class="p">)</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="sx">%w{ G   }</span> <span class="p">)</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="sx">%w{ A F }</span> <span class="p">)</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="sx">%w{ F   }</span> <span class="p">)</span>
-</span><span class='line'>  <span class="n">dep</span><span class="o">.</span><span class="n">add_direct</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="sx">%w{ H   }</span> <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ B C E F G H }</span><span class="p">,</span>   <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ C E F G H }</span><span class="p">,</span>     <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ G }</span><span class="p">,</span>             <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ A B C E F G H }</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ F H }</span><span class="p">,</span>           <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="n">assert_equal</span><span class="p">(</span> <span class="sx">%w{ H }</span><span class="p">,</span>             <span class="n">dep</span><span class="o">.</span><span class="n">dependencies_for</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Stop reading now, and start coding. Once you’ve got your code working,
-try feeding it the following dependencies.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">A</span> <span class="n">B</span>
-</span><span class='line'>  <span class="n">B</span> <span class="n">C</span>
-</span><span class='line'>  <span class="n">C</span> <span class="n">A</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Does it work correctly? If not, ask yourself is this is a condition
-you should have considered during testing.</p>
-
-<p>Once you’ve got your code working with all the various test cases you
-can imagine, let’s think for a minute about performance. Say we were
-using this code to find all the relationships between the inhabitants
-of the United Kingdom. How would your code perform with 55-60 million
-items?</p>
 ]]></content>
   </entry>
   
