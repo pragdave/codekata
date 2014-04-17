@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[CodeKata]]></title>
-  <link href="http://pragdave.github.io/codekata/atom.xml" rel="self"/>
-  <link href="http://pragdave.github.io/codekata/"/>
-  <updated>2014-04-14T12:35:07-05:00</updated>
-  <id>http://pragdave.github.io/codekata/</id>
+  <link href="http://codekata.com/atom.xml" rel="self"/>
+  <link href="http://codekata.com/"/>
+  <updated>2014-04-16T22:02:37-05:00</updated>
+  <id>http://codekata.com/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
     
@@ -15,10 +15,10 @@
   
   <entry>
     <title type="html"><![CDATA[CodeKata]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/codekata-intro/"/>
+    <link href="http://codekata.com/kata/codekata-intro/"/>
     <updated>2014-04-14T01:00:00-05:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/codekata-intro</id>
-    <content type="html"><![CDATA[<p><img class="right" src="http://pragdave.github.io/codekata/images/kitten2.jpg"></p>
+    <id>http://codekata.com/kata/codekata-intro</id>
+    <content type="html"><![CDATA[<p><img class="right" src="http://codekata.com/images/kitten2.jpg"></p>
 
 <p>How do you get to be a great musician? It helps to know the theory,
 and to understand the mechanics of your instrument. It helps to have
@@ -65,70 +65,70 @@ the practice, not the solution.</p>
 <h3>Links</h3>
 
 <ul>
-<li><p><a href="http://pragdave.github.io/codekata/kata/codekata-how-it-started">A description of how this all started</a></p></li>
-<li><p>Sometimes ‘kata’ isn’t quite the right word; <a href="http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus">karate uses other techniques to teach too</a>.</p></li>
+<li><p><a href="http://codekata.com/kata/codekata-how-it-started">A description of how this all started</a></p></li>
+<li><p>Sometimes ‘kata’ isn’t quite the right word; <a href="http://codekata.com/kata/kata-kumite-koan-and-dreyfus">karate uses other techniques to teach too</a>.</p></li>
 </ul>
 
 
 <h3>The Kata</h3>
 
 <ul>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing">Kata 1: Supermarket
+<li><p><a href="http://codekata.com/kata/kata01-supermarket-pricing">Kata 1: Supermarket
 pricing</a>. Pricing looks easy, but
 scratch the surface and there are some interesting issues to
 consider.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata02-karate-chop">Kata 2: Karate Chop</a>. A binary chop
+<li><p><a href="http://codekata.com/kata/kata02-karate-chop">Kata 2: Karate Chop</a>. A binary chop
 algorithm is fairly boring. Until you have to implement it using
 five totally different techniques.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast">Kata 3: How Big, How Fast?</a> Quick estimation
+<li><p><a href="http://codekata.com/kata/kata03-how-big-how-fast">Kata 3: How Big, How Fast?</a> Quick estimation
 is invaluable when it comes to making design and implementation
 decisions. Here are some questions to make you turn over the
 envelope.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata04-data-munging">Kata 4: Data Munging</a>. Implement two simple data
+<li><p><a href="http://codekata.com/kata/kata04-data-munging">Kata 4: Data Munging</a>. Implement two simple data
 extraction routines, and see how much they have in common.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata05-bloom-filters">Kata 5: Bloom Filters</a>. Implement a simple
+<li><p><a href="http://codekata.com/kata/kata05-bloom-filters">Kata 5: Bloom Filters</a>. Implement a simple
 hash-based lookup mechanism and explore its characteristics.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata06-anagrams">Kata 6: Anagrams</a>. Find all the anagram combinations
+<li><p><a href="http://codekata.com/kata/kata06-anagrams">Kata 6: Anagrams</a>. Find all the anagram combinations
 in a dictionary.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata07-howd-i-do">Kata 7: Reviewing</a>. What does our code look like
+<li><p><a href="http://codekata.com/kata/kata07-howd-i-do">Kata 7: Reviewing</a>. What does our code look like
 through critical eyes, and how can we make our eyes more critical?</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives">Kata 8: Objectives</a>. What effects do
+<li><p><a href="http://codekata.com/kata/kata08-conflicting-objectives">Kata 8: Objectives</a>. What effects do
 our objectives have on the way we write code?</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout">Kata 9: Checkout</a>. Back to the
+<li><p><a href="http://codekata.com/kata/kata09-back-to-the-checkout">Kata 9: Checkout</a>. Back to the
 supermarket. This week, we’ll implement the code for a checkout
 system that handles pricing schemes such as &ldquo;apples cost 50 cents,
 three apples cost $1.30.&rdquo;</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes">Kata 10: Hash vs. Class</a>. Is it always
+<li><p><a href="http://codekata.com/kata/kata10-hashes-vs-classes">Kata 10: Hash vs. Class</a>. Is it always
 correct to use (for example) classes and objects to structure
 complex business objects, or couple simpler structures (hash as
 Hashes) do the job?</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata11-sorting-it-out">Kata 11: Sorting it Out</a>. Just because we need
+<li><p><a href="http://codekata.com/kata/kata11-sorting-it-out">Kata 11: Sorting it Out</a>. Just because we need
 to sort something doesn’t necessarily mean we need to use a
 conventional sorting algorithm.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata12-best-sellers">Kata 12: Best Sellers</a>. Consider the
+<li><p><a href="http://codekata.com/kata/kata12-best-sellers">Kata 12: Best Sellers</a>. Consider the
 implementation of a top-ten best sellers list for a high volume web
 store.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata13-counting-code-lines">Kata 13: Counting Lines</a>. Counting lines
+<li><p><a href="http://codekata.com/kata/kata13-counting-code-lines">Kata 13: Counting Lines</a>. Counting lines
 of code in Java source is not quite as simple as it seems.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood">Kata 14: Trigrams</a>. Generating
+<li><p><a href="http://codekata.com/kata/kata14-tom-swift-under-the-milkwood">Kata 14: Trigrams</a>. Generating
 text using trigram analysis lets us experiment with different
 heuristics. (And it let&rsquo;s us create new, original Tom Swift stories…)</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata15-a-diversion">Kata 15: Playing with bits</a>. A diversion to
+<li><p><a href="http://codekata.com/kata/kata15-a-diversion">Kata 15: Playing with bits</a>. A diversion to
 discover the pattern in some bit sequences.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata16-business-rules">Kata 16: Business Rules</a>. How can you tame a
+<li><p><a href="http://codekata.com/kata/kata16-business-rules">Kata 16: Business Rules</a>. How can you tame a
 wild (and changing) set of business rules?</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata17-more-business-rules">Kata 17: More Business Rules</a>. The rules
+<li><p><a href="http://codekata.com/kata/kata17-more-business-rules">Kata 17: More Business Rules</a>. The rules
 that specify the overall processing of an order can be complex too,
 particularly as they often involve waiting around for things to
 happen.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata18-transitive-dependencies">Kata 18: Dependencies</a>. Let’s write
+<li><p><a href="http://codekata.com/kata/kata18-transitive-dependencies">Kata 18: Dependencies</a>. Let’s write
 some code that calculates how dependencies propagate between things
 such as classes in a program.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata19-word-chains">Kata 19: Word chains</a>. Write a program that solves
+<li><p><a href="http://codekata.com/kata/kata19-word-chains">Kata 19: Word chains</a>. Write a program that solves
 word chain puzzles (cat → cot → dot → dog).</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata20-klondike">Kata 20: Klondike</a>. Experiment with various
+<li><p><a href="http://codekata.com/kata/kata20-klondike">Kata 20: Klondike</a>. Experiment with various
 heuristics for playing the game Klondike.</p></li>
-<li><p><a href="http://pragdave.github.io/codekata/kata/kata21-simple-lists">Kata 21: Simple Lists</a>. Play with different
+<li><p><a href="http://codekata.com/kata/kata21-simple-lists">Kata 21: Simple Lists</a>. Play with different
 implementations of a simple list.</p></li>
 </ul>
 
@@ -142,9 +142,9 @@ be interesting to see how (and if) the discussion develops.</p>
   
   <entry>
     <title type="html"><![CDATA[CodeKata: How It Started]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/codekata-how-it-started/"/>
+    <link href="http://codekata.com/kata/codekata-how-it-started/"/>
     <updated>2013-12-31T00:00:00-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/codekata-how-it-started</id>
+    <id>http://codekata.com/kata/codekata-how-it-started</id>
     <content type="html"><![CDATA[<p>(This is a long one. It explains how I discovered that something I do
 almost every day to improve my coding is actually a little ritual that
 has much in common with practice in the martial arts…)</p>
@@ -347,10 +347,10 @@ matter. Experiment, measure, improve.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata, Kumite, Koan, and Dreyfus]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus/"/>
+    <link href="http://codekata.com/kata/kata-kumite-koan-and-dreyfus/"/>
     <updated>2013-12-30T17:13:28-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata-kumite-koan-and-dreyfus</id>
-    <content type="html"><![CDATA[<p>A week or so ago posted <a href="http://pragdave.github.io/codekata/kata/codekata-how-it-started/">a piece</a>
+    <id>http://codekata.com/kata/kata-kumite-koan-and-dreyfus</id>
+    <content type="html"><![CDATA[<p>A week or so ago posted <a href="http://codekata.com/kata/codekata-how-it-started/">a piece</a>
 called CodeKata, suggesting that as
 developers we need to spend more time just practicing: writing
 throwaway code just to get the experience of writing it. I followed
@@ -450,9 +450,9 @@ Andy’s talk, “Experience comes from practice”.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata01: Supermarket Pricing]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing/"/>
+    <link href="http://codekata.com/kata/kata01-supermarket-pricing/"/>
     <updated>2013-12-29T17:15:57-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata01-supermarket-pricing</id>
+    <id>http://codekata.com/kata/kata01-supermarket-pricing</id>
     <content type="html"><![CDATA[<p>This kata arose from some discussions we’ve been having at the DFW
 Practioners meetings. The problem domain is something seemingly
 simple: pricing goods at supermarkets.</p>
@@ -532,9 +532,9 @@ from the process, not from the result.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata02: Karate Chop]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata02-karate-chop/"/>
+    <link href="http://codekata.com/kata/kata02-karate-chop/"/>
     <updated>2013-12-28T17:20:30-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata02-karate-chop</id>
+    <id>http://codekata.com/kata/kata02-karate-chop</id>
     <content type="html"><![CDATA[<p>A binary chop (sometimes called the more prosaic binary search) finds
 the position of value in a sorted array of values. It achieves some
 efficiency by halving the number of items under consideration each
@@ -656,9 +656,9 @@ search-and-replaces to make this compile in your language of choice
   
   <entry>
     <title type="html"><![CDATA[Kata03: How Big? How Fast?]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast/"/>
+    <link href="http://codekata.com/kata/kata03-how-big-how-fast/"/>
     <updated>2013-12-27T17:23:28-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata03-how-big-how-fast</id>
+    <id>http://codekata.com/kata/kata03-how-big-how-fast</id>
     <content type="html"><![CDATA[<p>Rough estimation is a useful talent to possess. As you’re coding away,
 you may suddenly need to work out approximately how big a data
 structure will be, or how fast some loop will run. The faster you can
@@ -725,9 +725,9 @@ password?</p></li>
   
   <entry>
     <title type="html"><![CDATA[Kata04: Data Munging]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata04-data-munging/"/>
+    <link href="http://codekata.com/kata/kata04-data-munging/"/>
     <updated>2013-12-26T17:26:23-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata04-data-munging</id>
+    <id>http://codekata.com/kata/kata04-data-munging</id>
     <content type="html"><![CDATA[<p>Martin Fowler gave me a hard time for Kata02, complaining that it was
 yet another single-function, academic exercise. Which, or course, it
 was. So this week let’s mix things up a bit.</p>
@@ -740,7 +740,7 @@ not to read ahead—do each part in turn.</p>
 
 <h1>Part One: Weather Data</h1>
 
-<p>In <a href="http://pragdave.github.io/codekata/data/04/weather.dat">weather.dat</a> you’ll find daily weather data
+<p>In <a href="http://codekata.com/data/04/weather.dat">weather.dat</a> you’ll find daily weather data
 for Morristown, NJ for June 2002. Download this text file, then write
 a program to output the day number (column one) with the smallest
 temperature spread (the maximum temperature is the second column, the
@@ -748,7 +748,7 @@ minimum the third column).</p>
 
 <h1>Part Two: Soccer League Table</h1>
 
-<p>The file <a href="http://pragdave.github.io/codekata/data/04/football.dat">football.dat</a> contains the results
+<p>The file <a href="http://codekata.com/data/04/football.dat">football.dat</a> contains the results
 from the English Premier League for 2001/2. The columns labeled ‘F’
 and ‘A’ contain the total number of goals scored for and against each
 team in that season (so Arsenal scored 79 goals against opponents, and
@@ -779,9 +779,9 @@ requirement? How about the maintainability?</p></li>
   
   <entry>
     <title type="html"><![CDATA[Kata05: Bloom Filters]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata05-bloom-filters/"/>
+    <link href="http://codekata.com/kata/kata05-bloom-filters/"/>
     <updated>2013-12-25T17:35:17-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata05-bloom-filters</id>
+    <id>http://codekata.com/kata/kata05-bloom-filters</id>
     <content type="html"><![CDATA[<p>There are many circumstances where we need to find out if something is
 a member of a set, and many algorithms for doing it. If the set is
 small, you can use bitmaps. When they get larger, hashes are a useful
@@ -840,7 +840,7 @@ use something that generates a fairly long hash (such as MD5) and then
 take your smaller hash values by extracting sequences of bits from the
 result. On a Unix box you can find a list of words in /usr/dict/words
 (or possibly in /usr/share/dict/words). For others, I’ve put a word
-list up <a href="http://pragdave.github.io/codekata/data/wordlist.txt">here</a>.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+list up <a href="http://codekata.com/data/wordlist.txt">here</a>.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
 
 <p>Play with using different numbers of hashes, and with different bitmap sizes.</p>
 
@@ -861,9 +861,9 @@ how many false positives you get.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata06: Anagrams]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata06-anagrams/"/>
+    <link href="http://codekata.com/kata/kata06-anagrams/"/>
     <updated>2013-12-24T17:46:21-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata06-anagrams</id>
+    <id>http://codekata.com/kata/kata06-anagrams</id>
     <content type="html"><![CDATA[<p>Back to non-realistic coding this week (sorry, Martin). Let’s solve
 some crossword puzzle clues.</p>
 
@@ -912,7 +912,7 @@ other. For example, your program might include in its output:</p>
 </span><span class='line'>  rots sort</span></code></pre></td></tr></table></div></figure>
 
 
-<p>If you run this on the word list <a href="http://pragdave.github.io/codekata/data/wordlist.txt">here</a> you should
+<p>If you run this on the word list <a href="http://codekata.com/data/wordlist.txt">here</a> you should
 find 20683 sets of anagrams (a total of 48162 words), including
 all-time favorites such as</p>
 
@@ -939,7 +939,7 @@ anagram combinations may take inordinate amounts of time to do the
 job. Working though alternatives should help bring the time down by
 orders of magnitude. To give you a possible point of comparison, I
 hacked a solution together in 25 lines of Ruby. It runs on
-<a href="http://pragdave.github.io/codekata/data/wordlist.txt">this wordlist</a> in 1.8s on a 1.7GHz i7.
+<a href="http://codekata.com/data/wordlist.txt">this wordlist</a> in 1.8s on a 1.7GHz i7.
 It’s also an interesting exercise in testing: can you write unit tests
 to verify that your code is working correctly before setting it to
 work on the full dictionary.</p>
@@ -948,9 +948,9 @@ work on the full dictionary.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata07: How'd I Do?]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata07-howd-i-do/"/>
+    <link href="http://codekata.com/kata/kata07-howd-i-do/"/>
     <updated>2013-12-23T18:04:19-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata07-howd-i-do</id>
+    <id>http://codekata.com/kata/kata07-howd-i-do</id>
     <content type="html"><![CDATA[<p>The last couple of kata have been programming challenges; let’s move
 back into mushier, people-oriented stuff this week.</p>
 
@@ -1007,9 +1007,9 @@ bad coder, and bug hunt) when we’re reviewing our colleagues code?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata08: Conflicting Objectives]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives/"/>
+    <link href="http://codekata.com/kata/kata08-conflicting-objectives/"/>
     <updated>2013-12-22T18:06:35-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata08-conflicting-objectives</id>
+    <id>http://codekata.com/kata/kata08-conflicting-objectives</id>
     <content type="html"><![CDATA[<p>Why do we write code? At one level, we’re trying to solve some
 particular problem, to add some kind of value to the world. But often
 there are also secondary objectives: the code has to solve the
@@ -1065,9 +1065,9 @@ optimizations you may perform on the code you write?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata09: Back to the Checkout]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout/"/>
+    <link href="http://codekata.com/kata/kata09-back-to-the-checkout/"/>
     <updated>2013-12-21T18:08:19-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata09-back-to-the-checkout</id>
+    <id>http://codekata.com/kata/kata09-back-to-the-checkout</id>
     <content type="html"><![CDATA[<p>Back to the supermarket. This week, we’ll implement the code for a
 checkout system that handles pricing schemes such as “apples cost 50
 cents, three apples cost $1.30.”</p>
@@ -1223,9 +1223,9 @@ in the future?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata10: Hashes vs. Classes]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes/"/>
+    <link href="http://codekata.com/kata/kata10-hashes-vs-classes/"/>
     <updated>2013-12-20T18:10:37-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata10-hashes-vs-classes</id>
+    <id>http://codekata.com/kata/kata10-hashes-vs-classes</id>
     <content type="html"><![CDATA[<p>If we’re programming business applications in a language such as Java
 or C#, we’re used to constructing and using classes to manipulate our
 business objects. Is this always the right way to go, or would a less
@@ -1274,9 +1274,9 @@ issue related to the static/dynamic typing debate?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata11: Sorting It Out]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata11-sorting-it-out/"/>
+    <link href="http://codekata.com/kata/kata11-sorting-it-out/"/>
     <updated>2013-12-19T18:12:09-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata11-sorting-it-out</id>
+    <id>http://codekata.com/kata/kata11-sorting-it-out</id>
     <content type="html"><![CDATA[<p>Just because we need to sort something doesn’t necessarily mean we
 need to use a conventional sorting algorithm.</p>
 
@@ -1361,9 +1361,9 @@ built-in libraries?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata12: Best Sellers]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata12-best-sellers/"/>
+    <link href="http://codekata.com/kata/kata12-best-sellers/"/>
     <updated>2013-12-18T18:16:42-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata12-best-sellers</id>
+    <id>http://codekata.com/kata/kata12-best-sellers</id>
     <content type="html"><![CDATA[<p>A GedankenKata this week: no code needed (although writing short prototypes might help you come to a conclusion).</p>
 
 <!-- more -->
@@ -1401,9 +1401,9 @@ aging, time-space tradeoffs, and the like.</p>
   
   <entry>
     <title type="html"><![CDATA[Kata13: Counting Code Lines]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata13-counting-code-lines/"/>
+    <link href="http://codekata.com/kata/kata13-counting-code-lines/"/>
     <updated>2013-12-17T18:18:41-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata13-counting-code-lines</id>
+    <id>http://codekata.com/kata/kata13-counting-code-lines</id>
     <content type="html"><![CDATA[<p>Counting lines of code in Java source is not quite as simple as it seems.</p>
 
 <!-- more -->
@@ -1480,9 +1480,9 @@ approach to subsequent ones?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata14: Tom Swift Under the Milkwood]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood/"/>
+    <link href="http://codekata.com/kata/kata14-tom-swift-under-the-milkwood/"/>
     <updated>2013-12-16T18:21:56-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata14-tom-swift-under-the-milkwood</id>
+    <id>http://codekata.com/kata/kata14-tom-swift-under-the-milkwood</id>
     <content type="html"><![CDATA[<p>Trigrams can be used to mutate text into new, surreal, forms. But what
 heuristics do we apply to get a reasonable result?</p>
 
@@ -1595,9 +1595,9 @@ to be a dead end?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata15: A Diversion]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata15-a-diversion/"/>
+    <link href="http://codekata.com/kata/kata15-a-diversion/"/>
     <updated>2013-12-15T18:28:25-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata15-a-diversion</id>
+    <id>http://codekata.com/kata/kata15-a-diversion</id>
     <content type="html"><![CDATA[<p>Think of binary numbers: sequences of 0&rsquo;s and 1&rsquo;s. How many n-digit
 binary numbers are there that don&rsquo;t have two adjacent 1 bits? For
 example, here are the three-digit numbers:</p>
@@ -1615,9 +1615,9 @@ can you prove why the relationship exists?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata16: Business Rules]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata16-business-rules/"/>
+    <link href="http://codekata.com/kata/kata16-business-rules/"/>
     <updated>2013-12-14T18:33:29-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata16-business-rules</id>
+    <id>http://codekata.com/kata/kata16-business-rules</id>
     <content type="html"><![CDATA[<p>How can you tame a wild (and changing) set of business rules?</p>
 
 <!-- more -->
@@ -1681,9 +1681,9 @@ years and years of mindless support?</p>
   
   <entry>
     <title type="html"><![CDATA[Kata17: More Business Rules]]></title>
-    <link href="http://pragdave.github.io/codekata/kata/kata17-more-business-rules/"/>
+    <link href="http://codekata.com/kata/kata17-more-business-rules/"/>
     <updated>2013-12-13T18:35:30-06:00</updated>
-    <id>http://pragdave.github.io/codekata/kata/kata17-more-business-rules</id>
+    <id>http://codekata.com/kata/kata17-more-business-rules</id>
     <content type="html"><![CDATA[<p>The rules that specify the overall processing of an order can be
 complex too, particularly as they often involve waiting around for
 things to happen.</p>
