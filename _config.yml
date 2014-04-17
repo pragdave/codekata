@@ -2,7 +2,7 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://pragdave.github.io/codekata
+url: http://codekata.com
 title: CodeKata
 subtitle: Because experience<br/>is the <em>only</em> teacher
 author: Dave Thomas (@PragDave)
@@ -26,7 +26,7 @@ email:
 # ----------------------- #
 
 # If publishing to a subdirectory as in http://site.com/project set 'root: /project'
-root: /
+root: http://codekata.com
 permalink: /kata/:title/
 source: source
 destination: public
