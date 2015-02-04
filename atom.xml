@@ -4,7 +4,7 @@
   <title><![CDATA[CodeKata]]></title>
   <link href="http://codekata.com/atom.xml" rel="self"/>
   <link href="http://codekata.com/"/>
-  <updated>2014-04-16T22:02:37-05:00</updated>
+  <updated>2015-02-03T23:13:10-06:00</updated>
   <id>http://codekata.com/</id>
   <author>
     <name><![CDATA[Dave Thomas (@PragDave)]]></name>
@@ -350,7 +350,7 @@ matter. Experiment, measure, improve.</p>
     <link href="http://codekata.com/kata/kata-kumite-koan-and-dreyfus/"/>
     <updated>2013-12-30T17:13:28-06:00</updated>
     <id>http://codekata.com/kata/kata-kumite-koan-and-dreyfus</id>
-    <content type="html"><![CDATA[<p>A week or so ago posted <a href="http://codekata.com/kata/codekata-how-it-started/">a piece</a>
+    <content type="html"><![CDATA[<p>A week or so ago I posted <a href="http://codekata.com/kata/codekata-how-it-started/">a piece</a>
 called CodeKata, suggesting that as
 developers we need to spend more time just practicing: writing
 throwaway code just to get the experience of writing it. I followed
@@ -496,7 +496,7 @@ alternatives.</p>
 
 <p>The goal of this kata is to practice a looser style of experimental
 modelling. Look for as many different ways of handling the issues as
-possible. Consider the various tradeoffs of each. What techniques use
+possible. Consider the various tradeoffs of each. What techniques are
 best for exploring these models? For recording them? How can you
 validate a model is reasonable?</p>
 
