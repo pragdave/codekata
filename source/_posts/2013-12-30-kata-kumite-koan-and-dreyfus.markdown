@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-A week or so ago posted [a piece](/kata/codekata-how-it-started/)
+A week or so ago I posted [a piece](/kata/codekata-how-it-started/)
 called CodeKata, suggesting that as
 developers we need to spend more time just practicing: writing
 throwaway code just to get the experience of writing it. I followed
